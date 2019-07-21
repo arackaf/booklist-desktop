@@ -27,11 +27,13 @@ LIBS += /usr/local/curl/lib/libcurl.dylib -lcurl
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+        query.cpp
 
 HEADERS += \
         filter.h \
-        mainwindow.h
+        mainwindow.h \
+        query.h
 
 FORMS += \
         mainwindow.ui

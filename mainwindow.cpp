@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include "filter.h"
+#include "query.h"
 #include <curl/curl.h>
 #include <json.hpp>
 using json = nlohmann::json;
@@ -37,9 +38,17 @@ MainWindow::MainWindow(QWidget *parent) :
       curl_easy_cleanup(curl);
 
       //std::string junk = readBuffer.c_str();
+      auto data = "Hello World";
+      std::string encoded = curl_easy_escape(curl, "hello world", 11);
 
 
       ui->textEdit->setPlainText(QString { readBuffer.c_str() });
+
+      Query2 q{};
+      std::string s = encoded + q.doIt();
+
+      ui->textEdit2->setPlainText(QString { s.c_str() });
+
 
 
       auto j2 = json::parse(readBuffer);
