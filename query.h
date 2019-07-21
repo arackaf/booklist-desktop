@@ -1,8 +1,13 @@
 #pragma once
 
 #include <string>
+#include "filter.h"
 
-class Query2 {
+template <typename Of>
+class Query {
 public:
-    std::string doIt();
+    template<typename ...Ts>
+    Query(std::initializer_list<Filter<Of, Ts...>>){
+
+    }
 };

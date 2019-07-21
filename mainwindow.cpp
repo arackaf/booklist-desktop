@@ -7,6 +7,10 @@
 #include <json.hpp>
 using json = nlohmann::json;
 
+#include "query.h"
+#include "mongoquerybase.h"
+#include "booktable.h"
+
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
     ((std::string*)userp)->append((char*)contents, size * nmemb);
@@ -44,13 +48,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
       ui->textEdit->setPlainText(QString { readBuffer.c_str() });
 
-      Query2 q{};
-      std::string s = encoded + q.doIt();
-
-      ui->textEdit2->setPlainText(QString { s.c_str() });
-
-
-
       auto j2 = json::parse(readBuffer);
       auto x = j2.begin();
 
@@ -62,14 +59,20 @@ MainWindow::MainWindow(QWidget *parent) :
       int i = 12;
     }
 
+    using namespace Data::Books;
 
-    //ui->textEdit->setText(QString { "Hello" });
-    //ui->textEdit->setText(QString { "Yooooooo" });
+    auto q = filter(
+                Filter<Books, int>{ Field<Books> { "title" }, 12, "==" },
+                Filter<Books, double>{ Field<Books> { "title" }, 12.8, "==" }
+             );
 
 
-    Field f1 { "field1" };
-    std::string s = (f1 == "Hello World").val;
-    QString qs { s.c_str() };
+    //Book::filter({ Book::title == 12 });
+
+    //bt.filter({ bt.title == 12 });
+
+//    mt.filter({ Filter<int>{ Field{ "name" }, 12, "==" } });
+
 }
 
 MainWindow::~MainWindow()
