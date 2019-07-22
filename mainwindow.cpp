@@ -61,9 +61,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     using namespace Data::Books;
 
-    auto q = filter(
-                Filter<Books, int>{ Field<Books> { "title" }, 12, "==" },
-                Filter<Books, double>{ Field<Books> { "title" }, 12.8, "==" }
+    auto q = makeFilter<Books>(
+                Filter<Books>{ Field<Books> { "title" }, /*12,*/ "==" },
+                Filter<Books>{ Field<Books> { "title" }, /*12.8,*/ "==" }
              );
 
 

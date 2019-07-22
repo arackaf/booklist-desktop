@@ -3,11 +3,11 @@
 #include <iostream>
 #include "field.h"
 
-template<typename Of, typename T>
+template<typename Of/*, typename T*/>
 struct Filter
 {
     Field<Of> f;
-    T val;
+    //T val;
     std::string op;
 };
 
