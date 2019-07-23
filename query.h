@@ -6,8 +6,10 @@
 template <typename Of>
 class Query {
 public:
-    template<typename ...Ts>
-    Query(std::initializer_list<Filter<Of, Ts...>>){
-
+    Query(std::initializer_list<Filter<Of>> passedFilters)
+    {
+        this->filters = passedFilters;
     }
+private:
+    std::initializer_list<Filter<Of>> filters;
 };
