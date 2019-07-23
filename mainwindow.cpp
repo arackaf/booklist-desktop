@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
       std::string encoded = curl_easy_escape(curl, "hello world", 11);
 
 
-      ui->textEdit->setPlainText(QString { readBuffer.c_str() });
+      //ui->textEdit->setPlainText(QString { readBuffer.c_str() });
 
       auto j2 = json::parse(readBuffer);
       auto x = j2.begin();
@@ -62,9 +62,15 @@ MainWindow::MainWindow(QWidget *parent) :
     using namespace Data::Books;
 
     auto q = makeFilter(
-                Filter<Books>{ Field<Books> { "title" }, /*12,*/ "==" },
-                Filter<Books>{ Field<Books> { "title" }, /*12.8,*/ "==" }
-             );
+        title == "Hello",
+        "World" == smallImage,
+        pages == 20,
+        19 == edition
+    );
+
+    //q.filters
+
+    ui->textEdit->setPlainText(QString { (q.filters[0]->useValue() + q.filters[1]->useValue() + q.filters[2]->useValue() + q.filters[3]->useValue()).c_str() });
 
 
     //Book::filter({ Book::title == 12 });
