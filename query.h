@@ -6,11 +6,9 @@
 template <typename Of>
 class Query {
 public:
-    template<typename ...Ts>
-    Query(std::initializer_list<Ts...> passedFilters)
+    Query(std::initializer_list<std::shared_ptr<Filter<Of>>> passedFilters) : filters(passedFilters)
     {
-        this->filters = passedFilters;
+
     }
-private:
-    std::initializer_list<Filter<Of>> filters;
+    std::vector<std::shared_ptr<Filter<Of>>> filters;
 };

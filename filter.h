@@ -1,15 +1,50 @@
 #pragma once
 
+#include <string>
 #include <iostream>
 #include "field.h"
 
-template<typename Of/*, typename T*/>
+template<typename Of>
 struct Filter
 {
+    Filter(Field<Of> f, std::string op) : f(f), op(op) {}
     Field<Of> f;
-    //T val;
     std::string op;
+    virtual std::string useValue() = 0; //dummy POC method
 };
+
+template <typename Of, typename T>
+struct ActualFilter: public Filter<Of>
+{
+    ActualFilter(Field<Of> f, T val, std::string op) : Filter<Of>(f, op), val(val) {}
+    T val;
+    virtual std::string useValue();
+
+private:
+    template<typename U>
+    std::string getValue(U val);
+    std::string getValue(std::string val);
+};
+
+template<typename Of, typename T>
+std::string ActualFilter<Of, T>::useValue()
+{
+    return this->getValue(val);
+}
+
+template<typename Of, typename T>
+template<typename U>
+std::string ActualFilter<Of, T>::getValue(U val)
+{
+    return std::to_string(val);
+}
+
+template<typename Of, typename T>
+std::string ActualFilter<Of, T>::getValue(std::string val)
+{
+    return val;
+}
+
 
 //template <typename T>
 //Filter<T> Field::operator==(const T &val)
