@@ -26,6 +26,7 @@ CONFIG += c++17
 LIBS += /usr/local/curl/lib/libcurl.dylib -lcurl
 
 SOURCES += \
+        filter.cpp \
         main.cpp \
         mainwindow.cpp \
         mongotablebase.cpp \

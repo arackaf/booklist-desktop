@@ -62,15 +62,15 @@ MainWindow::MainWindow(QWidget *parent) :
     using namespace Data::Books;
 
     auto q = makeFilter(
-        title == "Hello",
-        "World" == smallImage,
+        title == "Hello World",
+        "World Hello" == smallImage,
         pages == 20,
         19 == edition
     );
 
     //q.filters
 
-    ui->textEdit->setPlainText(QString { (q.filters[0]->useValue() + q.filters[1]->useValue() + q.filters[2]->useValue() + q.filters[3]->useValue()).c_str() });
+    ui->textEdit->setPlainText(QString { (q.filters[0]->serialize() + "\n" + q.filters[1]->serialize() + "\n" + q.filters[2]->serialize() + "\n" + q.filters[3]->serialize()  + "\n\n" + q.serialize()).c_str() });
 
 
     //Book::filter({ Book::title == 12 });
