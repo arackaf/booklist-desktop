@@ -3,7 +3,16 @@
 #include "filter.h"
 
 template <>
-std::string serializeVal<std::string>(std::string val)
+std::string printJsonValue<std::string>(std::string val)
 {
     return "\"" + val + "\"";
 }
+
+const std::map<std::string, std::string> opLookup = std::map<std::string, std::string>
+{
+    { "==", "" },
+    { "<", "_lt" },
+    { "<=", "_lte" },
+    { ">", "_gt" },
+    { ">=", "_gte" }
+};
