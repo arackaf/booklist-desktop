@@ -6,21 +6,6 @@
 #include <curl/curl.h>
 #include "field.h"
 
-template<typename T>
-std::string encode(T val);
-
-template <>
-std::string encode (std::string val);
-
-template<typename T>
-std::string encode(T val)
-{
-    static CURL *curl = curl_easy_init();
-
-    std::string strVal = std::to_string(val);
-    return curl_easy_escape(curl, strVal.c_str(), strVal.size());
-}
-
 template<typename Of>
 struct Filter
 {
@@ -73,7 +58,7 @@ std::string ActualFilter<Of, T>::serialize()
         throw "Op not found: " + this->op;
     }
 
-    return this->f.name + res->second + ":" + serializeVal(this->val);
+    return "\"" + this->f.name + res->second + "\":" + serializeVal(this->val);
 }
 
 

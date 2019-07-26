@@ -3,6 +3,12 @@
 #include <string>
 #include "filter.h"
 
+template<typename T>
+std::string encode(T val);
+
+template <>
+std::string encode (std::string val);
+
 template <typename Of>
 class Query {
 public:
@@ -26,5 +32,5 @@ std::string Query<Of>::serialize()
         result += filters[i]->serialize();
     }
     result = "{" + result + "}";
-    return result;
+    return encode(result);
 }
