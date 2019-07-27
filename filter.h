@@ -9,8 +9,7 @@
 template<typename Of>
 struct Filter
 {
-    Filter(Field<Of> f, std::string op) : f(f), op(op) {}
-    Field<Of> f;
+    Filter(std::string op) : op(op) {}
     std::string op;
     virtual std::string serialize() = 0; //dummy POC method
 };
@@ -18,16 +17,18 @@ struct Filter
 template <typename Of, typename T>
 struct ActualFilter: public Filter<Of>
 {
-    ActualFilter(Field<Of> f, T val, std::string op) : Filter<Of>(f, op), val(val) {}
+    ActualFilter(Field<Of, T> f, T val, std::string op) : Filter<Of>(op), val(val), f(f) {}
     T val;
+    Field<Of, T> f;
     virtual std::string serialize();
 };
 
 template <typename Of, typename T>
 struct ActualFilter<Of, std::initializer_list<T>>: public Filter<Of>
 {
-    ActualFilter(Field<Of> f, T val, std::string op) : Filter<Of>(f, op), val(val) {}
-    T val;
+    ActualFilter(Field<Of, T> f, T val, std::string op) : Filter<Of>(f, op), val(val) {}
+    std::initializer_list<T> val;
+    Field<Of, T> f;
     virtual std::string serialize();
 };
 

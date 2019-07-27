@@ -11,17 +11,17 @@ class Books
 };
 
 //TODO: create these with a Macro
-extern Field<Books> title;
-inline Field<Books> title = Field<Books> { "title" };
+extern Field<Books, std::string> title;
+inline Field<Books, std::string> title = Field<Books, std::string> { "title" };
 
-extern Field<Books> smallImage;
-inline Field<Books> smallImage = Field<Books>{ "smallImage" };
+extern Field<Books, std::string> smallImage;
+inline Field<Books, std::string> smallImage = Field<Books, std::string>{ "smallImage" };
 
-extern Field<Books> pages;
-inline Field<Books> pages = Field<Books>{ "pages" };
+extern Field<Books, int> pages;
+inline Field<Books, int> pages = Field<Books, int>{ "pages" };
 
-extern Field<Books> edition;
-inline Field<Books> edition= Field<Books>{ "edition" };
+extern Field<Books, int> edition;
+inline Field<Books, int> edition= Field<Books, int>{ "edition" };
 
 }
 }
