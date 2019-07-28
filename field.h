@@ -107,15 +107,18 @@ std::shared_ptr<Filter<Of>> operator!=(const char (&val) [N], Field<Of, std::str
 
 // operator <
 
-template <typename Of, typename T>
-std::shared_ptr<Filter<Of>> operator<(NumericField<Of, T> f, const T &val)
+template <typename Of, typename T, typename U>
+std::shared_ptr<Filter<Of>> operator<(NumericField<Of, T> f, const U &val)
 {
     return val < f;
 }
 
-template <typename Of, typename T>
-std::shared_ptr<Filter<Of>> operator<(const T &val, const NumericField<Of, T> &f)
+template <typename Of, typename T, typename U>
+std::shared_ptr<Filter<Of>> operator<(const U &val, const NumericField<Of, T> &f)
 {
-    return std::make_shared<ActualFilter<Of, T>>(ActualFilter<Of, T>{ f, val, "<" });
+    using AdjustedType = std::common_type_t<T, U>;
+    using FilterType = ActualFilter<Of, AdjustedType>;
+
+    return std::make_shared<FilterType>(FilterType{ f, static_cast<AdjustedType>(val), "<" });
 }
 
