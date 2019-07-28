@@ -21,7 +21,13 @@ extern Field<Books, int> pages;
 inline Field<Books, int> pages = Field<Books, int>{ "pages" };
 
 extern Field<Books, int> edition;
-inline Field<Books, int> edition= Field<Books, int>{ "edition" };
+inline Field<Books, int> edition = Field<Books, int>{ "edition" };
+
+extern Field<Books, double> weight;
+inline Field<Books, double> weight = Field<Books, double>{ "weight" };
+
+extern ArrayField<Books, std::string> authors;
+inline ArrayField<Books, std::string> authors = ArrayField<Books, std::string>{ "authors" };
 
 }
 }

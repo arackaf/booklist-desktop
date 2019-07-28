@@ -66,10 +66,16 @@ MainWindow::MainWindow(QWidget *parent) :
         "World Hello" == smallImage,
         title.in({ "title1", "title2" }),
         pages == 20,
-        19 == edition
+        pages < 20,
+        20 < pages,
+        19 == edition,
+        weight < 9.5,
+        9.5 < weight,
+        weight < 9,
+        9 < weight,
+        authors.matches({ "author 1", "author 2" })
     );
 
-    size_t i = 1;
     std::string message = "";
     for (const auto &el : q.filters)
     {
@@ -78,14 +84,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     ui->textEdit->setPlainText(QString { (message + "\n\n" + q.serialize()).c_str() });
-
-
-    //Book::filter({ Book::title == 12 });
-
-    //bt.filter({ bt.title == 12 });
-
-//    mt.filter({ Filter<int>{ Field{ "name" }, 12, "==" } });
-
 }
 
 MainWindow::~MainWindow()
