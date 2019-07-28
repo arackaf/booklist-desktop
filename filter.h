@@ -26,7 +26,7 @@ struct ActualFilter: public Filter<Of>
 template <typename Of, typename T>
 struct ActualFilter<Of, std::initializer_list<T>>: public Filter<Of>
 {
-    ActualFilter(Field<Of, T> f, T val, std::string op) : Filter<Of>(f, op), val(val) {}
+    ActualFilter(Field<Of, T> f, const std::initializer_list<T> &val, std::string op) : Filter<Of>(op), val(val), f(f) {}
     std::initializer_list<T> val;
     Field<Of, T> f;
     virtual std::string serialize();
@@ -45,7 +45,6 @@ template <>
 std::string printJsonValue<std::string>(std::string);
 
 const extern std::map<std::string, std::string> opLookup;
-
 
 template<typename Of, typename T>
 std::string ActualFilter<Of, T>::serialize()
@@ -68,11 +67,12 @@ std::string ActualFilter<Of, std::initializer_list<T>>::serialize()
         throw "Op not found: " + this->op;
     }
 
-    std::string result = "\"" + this->f.name + res->second + "\":";
+    std::string result = "\"" + this->f.name + res->second + "\":[";
 
+    size_t i = 1;
     for (const auto &el : this->val)
     {
-        result += printJsonValue(el);
+        result += printJsonValue(el) + (i++ < val.size() ? "," : "]");
     }
     return result;
 }

@@ -14,5 +14,6 @@ const std::map<std::string, std::string> opLookup = std::map<std::string, std::s
     { "<", "_lt" },
     { "<=", "_lte" },
     { ">", "_gt" },
-    { ">=", "_gte" }
+    { ">=", "_gte" },
+    { "in", "_in" }
 };

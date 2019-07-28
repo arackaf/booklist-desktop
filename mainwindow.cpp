@@ -64,13 +64,20 @@ MainWindow::MainWindow(QWidget *parent) :
     auto q = makeFilter(
         title == "Hello World",
         "World Hello" == smallImage,
+        title.in({ "title1", "title2" }),
         pages == 20,
         19 == edition
     );
 
-    //q.filters
+    size_t i = 1;
+    std::string message = "";
+    for (const auto &el : q.filters)
+    {
+        message += el->serialize() + "\n";
+    }
 
-    ui->textEdit->setPlainText(QString { (q.filters[0]->serialize() + "\n" + q.filters[1]->serialize() + "\n" + q.filters[2]->serialize() + "\n" + q.filters[3]->serialize()  + "\n\n" + q.serialize()).c_str() });
+
+    ui->textEdit->setPlainText(QString { (message + "\n\n" + q.serialize()).c_str() });
 
 
     //Book::filter({ Book::title == 12 });
