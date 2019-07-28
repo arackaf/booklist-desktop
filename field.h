@@ -20,6 +20,21 @@ struct Field
 };
 
 template <typename Of, typename T>
+struct NumericField : public Field<Of, T> {};
+
+template <typename Of>
+struct NumericField<Of, int> : public Field<Of, int>
+{
+    using Field<Of, int>::Field;
+};
+
+template <typename Of>
+struct NumericField<Of, double> : public Field<Of, double>
+{
+    using Field<Of, double>::Field;
+};
+
+template <typename Of, typename T>
 struct ArrayField : public Field<Of, T>
 {
     using Field<Of, T>::Field;
@@ -92,26 +107,15 @@ std::shared_ptr<Filter<Of>> operator!=(const char (&val) [N], Field<Of, std::str
 
 // operator <
 
-template <typename Of>
-std::shared_ptr<Filter<Of>> operator<(Field<Of, int> f, const int &val)
+template <typename Of, typename T>
+std::shared_ptr<Filter<Of>> operator<(NumericField<Of, T> f, const T &val)
 {
     return val < f;
 }
 
-template <typename Of>
-std::shared_ptr<Filter<Of>> operator<(const int &val, const Field<Of, int> &f)
+template <typename Of, typename T>
+std::shared_ptr<Filter<Of>> operator<(const T &val, const NumericField<Of, T> &f)
 {
-    return std::make_shared<ActualFilter<Of, int>>(ActualFilter<Of, int>{ f, val, "<" });
+    return std::make_shared<ActualFilter<Of, T>>(ActualFilter<Of, T>{ f, val, "<" });
 }
 
-template <typename Of>
-std::shared_ptr<Filter<Of>> operator<(Field<Of, double> f, const double &val)
-{
-    return val < f;
-}
-
-template <typename Of>
-std::shared_ptr<Filter<Of>> operator<(const double &val, const Field<Of, double> &f)
-{
-    return std::make_shared<ActualFilter<Of, double>>(ActualFilter<Of, double>{ f, val, "<" });
-}

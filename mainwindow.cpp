@@ -71,8 +71,8 @@ MainWindow::MainWindow(QWidget *parent) :
         19 == edition,
         weight < 9.5,
         9.5 < weight,
-        weight < 9,
-        9 < weight,
+        weight < 9.0,
+        9.0 < weight,
         authors.matches({ "author 1", "author 2" })
     );
 
