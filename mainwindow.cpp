@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     std::string readBuffer;
 
     curl = curl_easy_init();
-    if(curl) {
+    if(false && curl) {
       curl_easy_setopt(curl, CURLOPT_URL, url4.c_str());
       curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
       curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
@@ -69,11 +69,16 @@ MainWindow::MainWindow(QWidget *parent) :
         pages < 20,
         20 < pages,
         19 == edition,
+
         weight < 9.5,
         9.5 < weight,
-        weight < 9,
-        9 < weight,
-        authors.matches({ "author 1", "author 2" })
+        weight < 9,   //coerce to double!
+        9 < weight,   //coerce to double!
+
+        authors.matches({ "author 1", "author 2" }),
+
+        title.as("titleAlias") == "Hello World",
+        "Hello World" == title.as("titleAlias2")
     );
 
     std::string message = "";

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <curl/curl.h>
 #include "field.h"
+#include "filterutils.h"
 
 template<typename Of>
 struct Filter
@@ -31,20 +32,6 @@ struct ActualFilter<Of, std::initializer_list<T>>: public Filter<Of>
     Field<Of, T> f;
     virtual std::string serialize();
 };
-
-template <typename T>
-std::string printJsonValue(T val);
-
-template <typename T>
-std::string printJsonValue(T val)
-{
-    return std::to_string(val);
-}
-
-template <>
-std::string printJsonValue<std::string>(std::string);
-
-const extern std::map<std::string, std::string> opLookup;
 
 template<typename Of, typename T>
 std::string ActualFilter<Of, T>::serialize()

@@ -27,6 +27,7 @@ LIBS += /usr/local/curl/lib/libcurl.dylib -lcurl
 
 SOURCES += \
         filter.cpp \
+        filterutils.cpp \
         main.cpp \
         mainwindow.cpp \
         mongotablebase.cpp \
@@ -36,6 +37,7 @@ HEADERS += \
         booktable.h \
         field.h \
         filter.h \
+        filterutils.h \
         mainwindow.h \
         mongoquerybase.h \
         query.h

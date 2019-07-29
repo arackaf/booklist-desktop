@@ -17,6 +17,7 @@ struct Field
     std::string name;
 
     std::shared_ptr<Filter<Of>> in(const std::initializer_list<T> &);
+    Field as(const std::string &);
 };
 
 template <typename Of, typename T>
@@ -40,6 +41,12 @@ struct ArrayField : public Field<Of, T>
     using Field<Of, T>::Field;
     std::shared_ptr<Filter<Of>> matches(const std::initializer_list<T> &);
 };
+
+template <typename Of, typename T>
+Field<Of, T> Field<Of, T>::as(const std::string &alias)
+{
+    return Field<Of, T>{ alias };
+}
 
 template <typename Of, typename T>
 std::shared_ptr<Filter<Of>> Field<Of, T>::in(const std::initializer_list<T> &vals)
