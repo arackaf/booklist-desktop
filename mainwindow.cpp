@@ -80,8 +80,13 @@ MainWindow::MainWindow(QWidget *parent) :
         title.as("titleAlias") == "Hello World",
         "Hello World" == title.as("titleAlias2"),*/
 
+        weight < 10 || weight < 50,
+        pages == 20,
         weight < 10 || weight < 50 || weight < 100
     );
+
+    //Query<Books> qb{ pages == 20, FilterList<Books>{ weight < 10, weight < 50 } };
+    Query<Books> qb{ pages == 20, std::make_shared<FilterList<Books>>(FilterList<Books>{ weight < 10, weight < 50 }) };
 
     std::string message = "";
     for (const auto &el : q.filters)

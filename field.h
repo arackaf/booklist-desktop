@@ -66,9 +66,22 @@ std::shared_ptr<Filter<Of>> ArrayField<Of, T>::matches(const std::initializer_li
 //operator ||
 
 template <typename Of>
-std::shared_ptr<Filter<Of>> operator ||(const std::shared_ptr<Filter<Of>> &lhs, const std::shared_ptr<Filter<Of>> &rhs)
+std::shared_ptr<FilterList<Of>> operator ||(const std::shared_ptr<Filter<Of>> &lhs, const std::shared_ptr<Filter<Of>> &rhs)
 {
     return std::make_shared<FilterList<Of>>(FilterList<Of>{ lhs, rhs });
+}
+
+template <typename Of>
+std::shared_ptr<FilterList<Of>> operator ||(const std::shared_ptr<Filter<Of>> &lhs, const std::shared_ptr<FilterList<Of>> &rhs)
+{
+    return rhs || lhs;
+}
+
+template <typename Of>
+std::shared_ptr<FilterList<Of>> operator ||(const std::shared_ptr<FilterList<Of>> &lhs, const std::shared_ptr<Filter<Of>> &rhs)
+{
+    lhs->filters.push_back(rhs);
+    return lhs;
 }
 
 // operator ==
