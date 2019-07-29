@@ -9,28 +9,51 @@
 
 template<typename Of>
 struct Filter
-{
-    Filter(std::string op) : op(op) {}
-    std::string op;
-    virtual std::string serialize() = 0; //dummy POC method
+{    
+    virtual std::string serialize() = 0;
 };
+
+template<typename Of>
+struct FilterList : public Filter<Of>
+{
+    FilterList(const std::initializer_list<std::shared_ptr<Filter<Of>>> &filters) : filters(filters) {}
+    std::string filterName { "OR" };
+    std::vector<std::shared_ptr<Filter<Of>>> filters;
+
+    std::string serialize();
+};
+
+template <typename Of>
+std::string FilterList<Of>::serialize()
+{
+    std::string result = "\"" + this->filterName + "\":[";
+
+    size_t i = 1;
+    for (const auto &el : this->filters)
+    {
+        result += el->serialize() + (i++ < filters.size() ? "," : "]");
+    }
+    return result;
+}
 
 template <typename Of, typename T>
 struct ActualFilter: public Filter<Of>
 {
-    ActualFilter(Field<Of, T> f, T val, std::string op) : Filter<Of>(op), val(val), f(f) {}
+    ActualFilter(Field<Of, T> f, T val, std::string op) : val(val), op(op), f(f) {}
     T val;
+    std::string op;
     Field<Of, T> f;
-    virtual std::string serialize();
+    std::string serialize();
 };
 
 template <typename Of, typename T>
 struct ActualFilter<Of, std::initializer_list<T>>: public Filter<Of>
 {
-    ActualFilter(Field<Of, T> f, const std::initializer_list<T> &val, std::string op) : Filter<Of>(op), val(val), f(f) {}
+    ActualFilter(Field<Of, T> f, const std::initializer_list<T> &val, std::string op) : val(val), op(op), f(f) {}
     std::initializer_list<T> val;
+    std::string op;
     Field<Of, T> f;
-    virtual std::string serialize();
+    std::string serialize();
 };
 
 template<typename Of, typename T>

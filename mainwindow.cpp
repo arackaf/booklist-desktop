@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent) :
     auto q = makeFilter(
         title == "Hello World",
         "World Hello" == smallImage,
-        title.in({ "title1", "title2" }),
+        /*title.in({ "title1", "title2" }),
         pages == 20,
         pages < 20,
         20 < pages,
@@ -78,7 +78,9 @@ MainWindow::MainWindow(QWidget *parent) :
         authors.matches({ "author 1", "author 2" }),
 
         title.as("titleAlias") == "Hello World",
-        "Hello World" == title.as("titleAlias2")
+        "Hello World" == title.as("titleAlias2"),*/
+
+        weight < 10 || weight < 50 || weight < 100
     );
 
     std::string message = "";

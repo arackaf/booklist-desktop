@@ -6,6 +6,9 @@
 template<typename Of>
 struct Filter;
 
+template<typename Of>
+struct FilterList;
+
 template<typename Of, typename T>
 struct ActualFilter;
 
@@ -58,6 +61,14 @@ template <typename Of, typename T>
 std::shared_ptr<Filter<Of>> ArrayField<Of, T>::matches(const std::initializer_list<T> &vals)
 {
     return std::make_shared<ActualFilter<Of, std::initializer_list<T>>>(ActualFilter<Of, std::initializer_list<T>>{ *this, vals, "==" });
+}
+
+//operator ||
+
+template <typename Of>
+std::shared_ptr<Filter<Of>> operator ||(const std::shared_ptr<Filter<Of>> &lhs, const std::shared_ptr<Filter<Of>> &rhs)
+{
+    return std::make_shared<FilterList<Of>>(FilterList<Of>{ lhs, rhs });
 }
 
 // operator ==
