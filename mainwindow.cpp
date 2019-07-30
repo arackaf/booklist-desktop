@@ -35,51 +35,49 @@ struct Holder
     }
 };
 
-template <typename T>
+
 struct Animal {};
 
-template <typename T>
-struct Person : public Animal<T>{};
+struct Person : public Animal{};
 
-template<typename T>
-void useAnimal(const Holder<Animal<T>> &a){}
+void useAnimal(const Holder<Animal> &a){}
 
 void testType()
 {
-    Holder<Animal<int>> ha = Holder<Animal<int>>{};
-    Holder<Person<int>> hp = Holder<Person<int>>{};
+    Holder<Animal> ha = Holder<Animal>{};
+    Holder<Person> hp = Holder<Person>{};
 
-    Holder<Animal<int>> ha2 = Holder<Person<int>>{};
-    Holder<Person<int>> hp2 = Holder<Person<int>>{};
+    Holder<Animal> ha2 = Holder<Person>{};
+    Holder<Person> hp2 = Holder<Person>{};
 
     ha = hp;
     //compile error?!
     useAnimal(hp);
 }
 
-template <typename T>
-void processAnimals(std::initializer_list<Animal<T>> animals)
-{
+//template <typename T>
+//void processAnimals(std::initializer_list<Animal<T>> animals)
+//{
 
-}
+//}
 
-template <typename T>
-void processAnimal(const Animal<T> &a){}
+//template <typename T>
+//void processAnimal(const Animal<T> &a){}
 
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    std::initializer_list<Animal<int>> aList = { Person<int>{}, Animal<int>{} };
-    std::initializer_list<Animal<int>> aList2 = { Person<int>{}, Animal<int>{} };
-    std::initializer_list<Person<int>> pList = { Person<int>{}, Person<int>{} };
+//    std::initializer_list<Animal<int>> aList = { Person<int>{}, Animal<int>{} };
+//    std::initializer_list<Animal<int>> aList2 = { Person<int>{}, Animal<int>{} };
+//    std::initializer_list<Person<int>> pList = { Person<int>{}, Person<int>{} };
 
     //aList = pList;
 
-    processAnimals(aList);
-    processAnimals({ Person<int>{}, Animal<int>{} });
-    processAnimals(std::initializer_list<Animal<int>>{ Person<int>{}, Person<int>{}, Person<int>{} });
+//    processAnimals(aList);
+//    processAnimals({ Person<int>{}, Animal<int>{} });
+//    processAnimals(std::initializer_list<Animal<int>>{ Person<int>{}, Person<int>{}, Person<int>{} });
     //processAnimals(std::initializer_list<Person<int>>{ Person<int>{}, Person<int>{}, Person<int>{} });
 
     //processAnimal(p);
