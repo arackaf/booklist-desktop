@@ -7,7 +7,7 @@ template<typename Of>
 struct Filter;
 
 template<typename Of>
-struct FilterList;
+struct OrFilter;
 
 template<typename Of, typename T>
 struct ActualFilter;
@@ -66,19 +66,19 @@ std::shared_ptr<Filter<Of>> ArrayField<Of, T>::matches(const std::initializer_li
 //operator ||
 
 template <typename Of, typename T, typename U>
-std::shared_ptr<FilterList<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<ActualFilter<Of, U>> &rhs)
+std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<ActualFilter<Of, U>> &rhs)
 {
-    return std::make_shared<FilterList<Of>>(FilterList<Of>{ lhs, rhs });
+    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
 }
 
 template <typename Of, typename T, typename U>
-std::shared_ptr<FilterList<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<FilterList<Of>> &rhs)
+std::shared_ptr<Filter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<OrFilter<Of>> &rhs)
 {
     return rhs || lhs;
 }
 
 template <typename Of, typename T>
-std::shared_ptr<FilterList<Of>> operator ||(const std::shared_ptr<FilterList<Of>> &lhs, const std::shared_ptr<ActualFilter<Of, T>> &rhs)
+std::shared_ptr<Filter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &lhs, const std::shared_ptr<ActualFilter<Of, T>> &rhs)
 {
     lhs->filters.push_back(rhs);
     return lhs;

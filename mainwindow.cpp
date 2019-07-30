@@ -62,6 +62,7 @@ MainWindow::MainWindow(QWidget *parent) :
     using namespace Data::Books;
 
     auto q = makeFilter(
+        weight < 10 || weight < 50,
         title == "Hello World",
         "World Hello" == smallImage,
         title.in({ "title1", "title2" }),
@@ -95,7 +96,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     //Query<Books> qb{ pages == 20, FilterList<Books>{ weight < 10, weight < 50 } };
-    Query<Books> qb{ pages == 20, std::make_shared<FilterList<Books>>(FilterList<Books>{ weight < 10, weight < 50 }) };
+    Query<Books> qb{ pages == 20, std::make_shared<OrFilter<Books>>(OrFilter<Books>{ weight < 10, weight < 50 }) };
 
     std::string message = "";
     for (const auto &el : q.filters)

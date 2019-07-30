@@ -19,7 +19,7 @@ struct FilterType<std::shared_ptr<ActualFilter<T, Of>>>
 };
 
 template <typename T>
-struct FilterType<std::shared_ptr<FilterList<T>>>
+struct FilterType<std::shared_ptr<OrFilter<T>>>
 {
     using Type = T;
 };

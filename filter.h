@@ -14,9 +14,9 @@ struct Filter
 };
 
 template<typename Of>
-struct FilterList : public Filter<Of>
+struct OrFilter : public Filter<Of>
 {
-    FilterList(const std::initializer_list<std::shared_ptr<Filter<Of>>> &filters) : filters(filters) {}
+    OrFilter(const std::initializer_list<std::shared_ptr<Filter<Of>>> &filters) : filters(filters) {}
     std::string filterName { "OR" };
     std::vector<std::shared_ptr<Filter<Of>>> filters;
 
@@ -24,7 +24,7 @@ struct FilterList : public Filter<Of>
 };
 
 template <typename Of>
-std::string FilterList<Of>::serialize()
+std::string OrFilter<Of>::serialize()
 {
     std::string result = "\"" + this->filterName + "\":[";
 
