@@ -28,11 +28,11 @@ struct Holder
 
     T livingThing;
 
-//    template<typename U>
-//    Holder operator =(Holder<U> old)
-//    {
-//        return Holder<T>{ old };
-//    }
+    template<typename U>
+    Holder operator =(const Holder<U> &old)
+    {
+        return Holder<T>{ old };
+    }
 };
 
 template <typename T>
@@ -41,16 +41,20 @@ struct Animal {};
 template <typename T>
 struct Person : public Animal<T>{};
 
+template<typename T>
+void useAnimal(const Holder<Animal<T>> &a){}
+
 void testType()
 {
     Holder<Animal<int>> ha = Holder<Animal<int>>{};
     Holder<Person<int>> hp = Holder<Person<int>>{};
 
-    // compile error - (attempts to) use ctor instead of operator = wtf
     Holder<Animal<int>> ha2 = Holder<Person<int>>{};
     Holder<Person<int>> hp2 = Holder<Person<int>>{};
 
     ha = hp;
+    //compile error?!
+    useAnimal(hp);
 }
 
 template <typename T>
