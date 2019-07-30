@@ -17,10 +17,69 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
     return size * nmemb;
 }
 
+
+template<typename T>
+struct Holder
+{
+    Holder() {}
+
+    template<typename U>
+    Holder(Holder<U> old) : livingThing(old.livingThing) {}
+
+    T livingThing;
+
+//    template<typename U>
+//    Holder operator =(Holder<U> old)
+//    {
+//        return Holder<T>{ old };
+//    }
+};
+
+template <typename T>
+struct Animal {};
+
+template <typename T>
+struct Person : public Animal<T>{};
+
+void testType()
+{
+    Holder<Animal<int>> ha = Holder<Animal<int>>{};
+    Holder<Person<int>> hp = Holder<Person<int>>{};
+
+    // compile error - (attempts to) use ctor instead of operator = wtf
+    Holder<Animal<int>> ha2 = Holder<Person<int>>{};
+    Holder<Person<int>> hp2 = Holder<Person<int>>{};
+
+    ha = hp;
+}
+
+template <typename T>
+void processAnimals(std::initializer_list<Animal<T>> animals)
+{
+
+}
+
+template <typename T>
+void processAnimal(const Animal<T> &a){}
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    std::initializer_list<Animal<int>> aList = { Person<int>{}, Animal<int>{} };
+    std::initializer_list<Animal<int>> aList2 = { Person<int>{}, Animal<int>{} };
+    std::initializer_list<Person<int>> pList = { Person<int>{}, Person<int>{} };
+
+    //aList = pList;
+
+    processAnimals(aList);
+    processAnimals({ Person<int>{}, Animal<int>{} });
+    processAnimals(std::initializer_list<Animal<int>>{ Person<int>{}, Person<int>{}, Person<int>{} });
+    //processAnimals(std::initializer_list<Person<int>>{ Person<int>{}, Person<int>{}, Person<int>{} });
+
+    //processAnimal(p);
+
     ui->setupUi(this);
 
     std::string url = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
