@@ -23,6 +23,14 @@ struct OrFilter : public Filter<Of>
     std::string serialize();
 };
 
+template<typename Of>
+struct AndFilter : public Filter<Of>
+{
+    AndFilter(const std::initializer_list<std::shared_ptr<Filter<Of>>> &filters) : filters(filters) {}
+    std::vector<std::shared_ptr<Filter<Of>>> filters;
+};
+
+
 template <typename Of>
 std::string OrFilter<Of>::serialize()
 {
