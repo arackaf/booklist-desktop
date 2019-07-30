@@ -12,6 +12,18 @@ struct FilterType<std::shared_ptr<Filter<T>>>
     using Type = T;
 };
 
+template <typename T, typename Of>
+struct FilterType<std::shared_ptr<ActualFilter<T, Of>>>
+{
+    using Type = T;
+};
+
+template <typename T>
+struct FilterType<std::shared_ptr<FilterList<T>>>
+{
+    using Type = T;
+};
+
 template<typename ...FilterArgs>
 decltype (auto) makeFilter(FilterArgs... filters)
 {

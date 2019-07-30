@@ -64,8 +64,10 @@ MainWindow::MainWindow(QWidget *parent) :
     auto q = makeFilter(
         title == "Hello World",
         "World Hello" == smallImage,
-        /*title.in({ "title1", "title2" }),
+        title.in({ "title1", "title2" }),
         pages == 20,
+        20 == pages,
+
         pages < 20,
         20 < pages,
         19 == edition,
@@ -78,12 +80,19 @@ MainWindow::MainWindow(QWidget *parent) :
         authors.matches({ "author 1", "author 2" }),
 
         title.as("titleAlias") == "Hello World",
-        "Hello World" == title.as("titleAlias2"),*/
+        "Hello World" == title.as("titleAlias2"),
 
         weight < 10 || weight < 50,
         pages == 20,
+        pages < 20,
         weight < 10 || weight < 50 || weight < 100
     );
+
+    //std::shared_ptr<Filter<Books>> x = weight < 10 || weight < 50;
+    std::shared_ptr<ActualFilter<Books, double>> x = weight < 10;
+    std::shared_ptr<ActualFilter<Books, double>> y = weight < 10;
+
+
 
     //Query<Books> qb{ pages == 20, FilterList<Books>{ weight < 10, weight < 50 } };
     Query<Books> qb{ pages == 20, std::make_shared<FilterList<Books>>(FilterList<Books>{ weight < 10, weight < 50 }) };
