@@ -17,6 +17,7 @@ template<typename Of>
 struct Filter
 {    
     virtual std::string serialize() = 0;
+    virtual ~Filter(){}
 };
 
 template<typename Of>
