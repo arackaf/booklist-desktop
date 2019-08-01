@@ -14,10 +14,7 @@ template <typename Of, typename T>
 struct NumericField;
 
 template <typename T>
-auto lambda1 = [](const std::shared_ptr<Filter<T>> &) { return std::make_shared<Filter<T>>(0); };
-
-template <typename T, typename U>
-auto lambda2 = [](const std::shared_ptr<ActualFilter<T, U>> &) { return std::make_shared<Filter<T>>(0); };
+std::shared_ptr<Filter<T>> fn1 (const std::shared_ptr<Filter<T>> &) { return std::make_shared<Filter<T>>(0); }
 
 template<typename Of>
 struct Filter
@@ -29,7 +26,7 @@ struct Filter
 
     inline static std::vector<std::function<std::shared_ptr<Filter<Of>>(const std::shared_ptr<Filter<Of>> &)>> foo
     {
-        lambda1<Of>
+        fn1
     };
 };
 
