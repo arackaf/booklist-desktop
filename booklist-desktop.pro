@@ -26,17 +26,21 @@ CONFIG += c++17
 LIBS += /usr/local/curl/lib/libcurl.dylib -lcurl
 
 SOURCES += \
-        filter.cpp \
-        filterutils.cpp \
+        Filter/filterutils.cpp \
+        Query/query.cpp \
         main.cpp \
         mainwindow.cpp \
-        mongotablebase.cpp \
-        query.cpp
 
 HEADERS += \
+        Field/field.h \
+        Filter/filter.h \
+        Filter/filterutils.h \
+        Filters/filter.h \
+        MongoTypes/booktable.h \
+        Query/mongoquerybase.h \
+        Query/query.h \
         booktable.h \
         field.h \
-        filter.h \
         filterutils.h \
         mainwindow.h \
         mongoquerybase.h \
@@ -50,6 +54,11 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
+
+INCLUDEPATH += Field
+INCLUDEPATH += Filter
+INCLUDEPATH += MongoTypes
+INCLUDEPATH += Query
 INCLUDEPATH += /usr/local/include
 INCLUDEPATH += /usr/local/Cellar/nlohmann_json/3.6.1/include/nlohmann
 

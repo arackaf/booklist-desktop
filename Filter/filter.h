@@ -7,6 +7,12 @@
 #include "field.h"
 #include "filterutils.h"
 
+template <typename Of, typename T>
+struct Field;
+
+template <typename Of, typename T>
+struct NumericField;
+
 template<typename Of>
 struct Filter
 {    
