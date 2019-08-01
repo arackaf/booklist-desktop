@@ -62,32 +62,33 @@ MainWindow::MainWindow(QWidget *parent) :
     using namespace Data::Books;
 
     auto q = makeFilter(
-        (weight < 10 || pages < 500) && (pages < 100 || weight < 90),
-        title == "Hello World",
-        weight < 10 || (weight < 50 || weight < 100),
-        title == "Hello World",
-        "World Hello" == smallImage,
-        title.in({ "title1", "title2" }),
-        pages == 20,
-        20 == pages,
+//        (weight < 10 || pages < 500) && (pages < 100 || weight < 90),
+//        title == "Hello World",
+//        weight < 10 || (weight < 50 || weight < 100),
+//        title == "Hello World",
+//        "World Hello" == smallImage,
+        title.in({ "title1", "title2" }) || weight < 50,
+//        pages == 20,
+//        20 == pages,
 
-        pages < 20,
-        20 < pages,
-        19 == edition,
+//        pages < 20,
+//        20 < pages,
+//        19 == edition,
 
-        weight < 9.5,
-        9.5 < weight,
-        weight < 9,   //coerce to double!
-        9 < weight,   //coerce to double!
+//        weight < 9.5,
+//        9.5 < weight,
+//        weight < 9,   //coerce to double!
+//        9 < weight,   //coerce to double!
 
-        authors.matches({ "author 1", "author 2" }),
+//        authors.matches({ "author 1", "author 2" }),
 
-        title.as("titleAlias") == "Hello World",
-        "Hello World" == title.as("titleAlias2"),
+//        title.as("titleAlias") == "Hello World",
+//        "Hello World" == title.as("titleAlias2"),
 
         weight < 10 || weight < 50,
-        pages == 20,
+        //pages == 20,
         pages < 20,
+        weight < 10 || (weight < 50 || weight < 100),
         weight < 10 || weight < 50 || weight < 100
     );
 
@@ -98,7 +99,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     //Query<Books> qb{ pages == 20, FilterList<Books>{ weight < 10, weight < 50 } };
-    Query<Books> qb{ pages == 20, std::make_shared<OrFilter<Books>>(OrFilter<Books>{ weight < 10, weight < 50 }) };
+    //Query<Books> qb{ pages == 20, std::make_shared<OrFilter<Books>>(OrFilter<Books>{ weight < 10, weight < 50 }) };
 
     std::string message = "";
     for (const auto &el : q.filters)

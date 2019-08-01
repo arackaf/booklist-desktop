@@ -2,6 +2,7 @@
 
 #include<string>
 #include "filter.h"
+#include "actualfilter.h"
 
 template<typename Of>
 struct Filter;
@@ -22,7 +23,7 @@ struct Field
     Field(std::string &&val): name(std::move(val)) { }
     std::string name;
 
-    std::shared_ptr<Filter<Of>> in(const std::initializer_list<T> &);
+    std::shared_ptr<ActualFilter<Of, std::initializer_list<T>>> in(const std::initializer_list<T> &);
     Field as(const std::string &);
 };
 
@@ -55,7 +56,7 @@ Field<Of, T> Field<Of, T>::as(const std::string &alias)
 }
 
 template <typename Of, typename T>
-std::shared_ptr<Filter<Of>> Field<Of, T>::in(const std::initializer_list<T> &vals)
+std::shared_ptr<ActualFilter<Of, std::initializer_list<T>>> Field<Of, T>::in(const std::initializer_list<T> &vals)
 {
     return std::make_shared<ActualFilter<Of, std::initializer_list<T>>>(ActualFilter<Of, std::initializer_list<T>>{ *this, vals, "in" });
 }
@@ -68,11 +69,6 @@ std::shared_ptr<Filter<Of>> ArrayField<Of, T>::matches(const std::initializer_li
 
 //operator ||
 
-template <typename Of, typename T, typename U>
-std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<ActualFilter<Of, U>> &rhs)
-{
-    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
-}
 
 template <typename Of, typename T>
 std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<OrFilter<Of>> &rhs)
@@ -164,18 +160,5 @@ std::shared_ptr<ActualFilter<Of, std::string>> operator!=(const char (&val) [N],
 
 // operator <
 
-template <typename Of, typename T, typename U>
-decltype (auto) operator<(const NumericField<Of, T> &f, const U &val)
-{
-    return val < f;
-}
 
-template <typename Of, typename T, typename U>
-decltype (auto) operator<(const U &val, const NumericField<Of, T> &f)
-{
-    using AdjustedType = std::common_type_t<T, U>;
-    using FilterType = ActualFilter<Of, AdjustedType>;
-
-    return std::make_shared<FilterType>(FilterType{ f, static_cast<AdjustedType>(val), "<" });
-}
 

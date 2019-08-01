@@ -33,6 +33,7 @@ SOURCES += \
 
 HEADERS += \
         Field/field.h \
+        Filter/actualfilter.h \
         Filter/filter.h \
         Filter/filterutils.h \
         Filters/filter.h \
