@@ -67,14 +67,6 @@ std::string ActualFilter<Of, std::initializer_list<T>>::serialize()
     return result;
 }
 
-//            OPERATOR ||
-
-template <typename Of, typename T, typename U>
-std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<ActualFilter<Of, U>> &rhs)
-{
-    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
-}
-
 //            OPERATOR <
 
 template <typename Of, typename T, typename U, typename = std::enable_if_t<std::is_arithmetic_v<U>>>
