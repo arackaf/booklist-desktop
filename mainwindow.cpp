@@ -71,6 +71,10 @@ MainWindow::MainWindow(QWidget *parent) :
         weight < 50 && weight < 100,
         weight < 10 && (weight < 50 && weight < 100),
         (weight < 10 && weight < 50) && weight < 100,
+
+        weight < 50 || (weight < 100 && weight < 200),
+        (weight < 50 || weight < 100) && weight < 200,
+
 //        title == "Hello World",
 //        "World Hello" == smallImage,
         title.in({ "title1", "title2" }) || weight < 50,
