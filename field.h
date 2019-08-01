@@ -9,6 +9,9 @@ struct Filter;
 template<typename Of>
 struct OrFilter;
 
+template<typename Of>
+struct AndFilter;
+
 template<typename Of, typename T>
 struct ActualFilter;
 
@@ -79,6 +82,22 @@ std::shared_ptr<Filter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T
 
 template <typename Of, typename T>
 std::shared_ptr<Filter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &lhs, const std::shared_ptr<ActualFilter<Of, T>> &rhs)
+{
+    lhs->filters.push_back(rhs);
+    return lhs;
+}
+
+//operator &&
+
+
+template <typename Of>
+std::shared_ptr<Filter<Of>> operator &&(const std::shared_ptr<OrFilter<Of>> &lhs, const std::shared_ptr<OrFilter<Of>> &rhs)
+{
+    return std::make_shared<AndFilter<Of>>(AndFilter<Of>{ lhs, rhs });
+}
+
+template <typename Of>
+std::shared_ptr<Filter<Of>> operator &&(const std::shared_ptr<AndFilter<Of>> &lhs, const std::shared_ptr<AndFilter<Of>> &rhs)
 {
     lhs->filters.push_back(rhs);
     return lhs;
