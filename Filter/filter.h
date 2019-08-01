@@ -32,7 +32,7 @@ struct OrFilter : public FilterList<Of>
 {
     using FilterList<Of>::FilterList;
     std::string filterName { "OR" };
-    std::string serialize();
+    std::string serialize() override;
 };
 
 template <typename Of>
@@ -52,7 +52,7 @@ template<typename Of>
 struct AndFilter : public FilterList<Of>
 {
     using FilterList<Of>::FilterList;
-    std::string serialize();
+    std::string serialize() override;
 };
 
 template <typename Of>

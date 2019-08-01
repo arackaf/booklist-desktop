@@ -23,7 +23,7 @@ struct ActualFilter: public Filter<Of>
     T val;
     std::string op;
     Field<Of, T> f;
-    std::string serialize();
+    std::string serialize() override;
 };
 
 template <typename Of, typename T>
@@ -33,7 +33,7 @@ struct ActualFilter<Of, std::initializer_list<T>>: public Filter<Of>
     std::initializer_list<T> val;
     std::string op;
     Field<Of, T> f;
-    std::string serialize();
+    std::string serialize() override;
 };
 
 template<typename Of, typename T>
