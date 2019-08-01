@@ -14,12 +14,17 @@ struct Filter
 };
 
 template<typename Of>
-struct OrFilter : public Filter<Of>
+struct FilterList : public Filter<Of>
 {
-    OrFilter(const std::initializer_list<std::shared_ptr<Filter<Of>>> &filters) : filters(filters) {}
-    std::string filterName { "OR" };
+    FilterList(const std::initializer_list<std::shared_ptr<Filter<Of>>> &filters) : filters(filters) {}
     std::vector<std::shared_ptr<Filter<Of>>> filters;
+};
 
+template<typename Of>
+struct OrFilter : public FilterList<Of>
+{
+    using FilterList<Of>::FilterList;
+    std::string filterName { "OR" };
     std::string serialize();
 };
 
@@ -31,17 +36,15 @@ std::string OrFilter<Of>::serialize()
     size_t i = 1;
     for (const auto &el : this->filters)
     {
-        result += "{" + el->serialize() + "}" + (i++ < filters.size() ? "," : "]");
+        result += "{" + el->serialize() + "}" + (i++ < this->filters.size() ? "," : "]");
     }
     return result;
 }
 
 template<typename Of>
-struct AndFilter : public Filter<Of>
+struct AndFilter : public FilterList<Of>
 {
-    AndFilter(const std::initializer_list<std::shared_ptr<Filter<Of>>> &filters) : filters(filters) {}
-    std::vector<std::shared_ptr<Filter<Of>>> filters;
-
+    using FilterList<Of>::FilterList;
     std::string serialize();
 };
 
@@ -53,7 +56,7 @@ std::string AndFilter<Of>::serialize()
     size_t i = 1;
     for (const auto &el : this->filters)
     {
-        result += el->serialize() + (i++ < filters.size() ? "," : "");
+        result += el->serialize() + (i++ < this->filters.size() ? "," : "");
     }
     return result;
 }

@@ -24,6 +24,12 @@ struct FilterType<std::shared_ptr<OrFilter<T>>>
     using Type = T;
 };
 
+template <typename T>
+struct FilterType<std::shared_ptr<AndFilter<T>>>
+{
+    using Type = T;
+};
+
 template<typename ...FilterArgs>
 decltype (auto) makeFilter(FilterArgs... filters)
 {

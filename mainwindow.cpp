@@ -63,7 +63,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     auto q = makeFilter(
         (weight < 10 || pages < 500) && (pages < 100 || weight < 90),
-        weight < 10 || weight < 50 || weight < 100,
+        title == "Hello World",
+        weight < 10 || (weight < 50 || weight < 100),
         title == "Hello World",
         "World Hello" == smallImage,
         title.in({ "title1", "title2" }),
