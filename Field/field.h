@@ -68,31 +68,32 @@ std::shared_ptr<Filter<Of>> ArrayField<Of, T>::matches(const std::initializer_li
 
 //operator ||
 
-template <typename Of, typename T, typename U>
-std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<ActualFilter<Of, U>> &rhs)
+template <typename Of>
+std::shared_ptr<Filter<Of>> operator ||(const std::shared_ptr<Filter<Of>> &lhs, const std::shared_ptr<Filter<Of>> &rhs)
 {
+    int i = lhs->X;
     return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
 }
 
-template <typename Of, typename T>
-std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<OrFilter<Of>> &rhs)
-{
-    return rhs || lhs;
-}
+//template <typename Of, typename T>
+//std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<OrFilter<Of>> &rhs)
+//{
+//    return rhs || lhs;
+//}
 
-template <typename Of, typename T>
-std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &lhs, const std::shared_ptr<ActualFilter<Of, T>> &rhs)
-{
-    lhs->filters.push_back(rhs);
-    return lhs;
-}
+//template <typename Of, typename T>
+//std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &lhs, const std::shared_ptr<ActualFilter<Of, T>> &rhs)
+//{
+//    lhs->filters.push_back(rhs);
+//    return lhs;
+//}
 
-template <typename Of>
-std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &lhs, const std::shared_ptr<OrFilter<Of>> &rhs)
-{
-    lhs->filters.push_back(rhs);
-    return lhs;
-}
+//template <typename Of>
+//std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &lhs, const std::shared_ptr<OrFilter<Of>> &rhs)
+//{
+//    lhs->filters.push_back(rhs);
+//    return lhs;
+//}
 
 //operator &&
 
@@ -165,13 +166,13 @@ std::shared_ptr<ActualFilter<Of, std::string>> operator!=(const char (&val) [N],
 // operator <
 
 template <typename Of, typename T, typename U>
-decltype (auto) operator<(const NumericField<Of, T> &f, const U &val)
+std::shared_ptr<Filter<Of>> operator<(const NumericField<Of, T> &f, const U &val)
 {
     return val < f;
 }
 
 template <typename Of, typename T, typename U>
-decltype (auto) operator<(const U &val, const NumericField<Of, T> &f)
+std::shared_ptr<Filter<Of>> operator<(const U &val, const NumericField<Of, T> &f)
 {
     using AdjustedType = std::common_type_t<T, U>;
     using FilterType = ActualFilter<Of, AdjustedType>;

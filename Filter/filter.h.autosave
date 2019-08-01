@@ -16,6 +16,9 @@ struct NumericField;
 template <typename T>
 auto lambda1 = [](const std::shared_ptr<Filter<T>> &) { return std::make_shared<Filter<T>>(0); };
 
+template <typename T, typename U>
+auto lambda2 = [](const std::shared_ptr<ActualFilter<T, U>> &) { return std::make_shared<Filter<T>>(0); };
+
 template<typename Of>
 struct Filter
 {
