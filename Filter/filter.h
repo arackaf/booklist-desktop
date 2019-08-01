@@ -17,21 +17,22 @@ template<typename Of>
 struct Filter
 {    
     virtual std::string serialize() = 0;
+
+    virtual std::shared_ptr<Filter<Of>> operator||(const std::shared_ptr<Filter<Of>>);
 };
 
 template<typename Of>
-struct FilterList : public Filter<Of>
+std::shared_ptr<Filter<Of>> Filter<Of>::operator||(const std::shared_ptr<Filter<Of>>){}
+
+template<typename Of>
+struct OrFilter : public Filter<Of>
 {
-    FilterList(const std::initializer_list<std::shared_ptr<Filter<Of>>> &filters) : filters(filters) {}
+    OrFilter(const std::initializer_list<std::shared_ptr<Filter<Of>>> &filters) : filters(filters) {}
     std::vector<std::shared_ptr<Filter<Of>>> filters;
-};
 
-template<typename Of>
-struct OrFilter : public FilterList<Of>
-{
-    using FilterList<Of>::FilterList;
     std::string filterName { "OR" };
     std::string serialize();
+    std::shared_ptr<Filter<Of>> operator||(const std::shared_ptr<Filter<Of>> &rhs);
 };
 
 template <typename Of>
@@ -47,11 +48,20 @@ std::string OrFilter<Of>::serialize()
     return result;
 }
 
-template<typename Of>
-struct AndFilter : public FilterList<Of>
+template <typename Of>
+std::shared_ptr<Filter<Of>> OrFilter<Of>::operator||(const std::shared_ptr<Filter<Of>> &rhs)
 {
-    using FilterList<Of>::FilterList;
+    return std::make_shared<Filter<Of>>(OrFilter<Of>{ std::initializer_list<Filter<Of>> { ActualFilter<Of, int>{ Field<Of, int>{"foo"}, 12, "==" } } } );
+}
+
+template<typename Of>
+struct AndFilter : public Filter<Of>
+{
+    AndFilter(const std::initializer_list<std::shared_ptr<Filter<Of>>> &filters) : filters(filters) {}
+    std::vector<std::shared_ptr<Filter<Of>>> filters;
+
     std::string serialize();
+    std::shared_ptr<Filter<Of>> operator||(const std::shared_ptr<Filter<Of>> &rhs);
 };
 
 template <typename Of>
@@ -67,6 +77,12 @@ std::string AndFilter<Of>::serialize()
     return result;
 }
 
+template <typename Of>
+std::shared_ptr<Filter<Of>> AndFilter<Of>::operator||(const std::shared_ptr<Filter<Of>> &rhs)
+{
+    return std::make_shared<AndFilter<Of>>(AndFilter<Of>{});
+}
+
 template <typename Of, typename T>
 struct ActualFilter: public Filter<Of>
 {
@@ -75,7 +91,14 @@ struct ActualFilter: public Filter<Of>
     std::string op;
     Field<Of, T> f;
     std::string serialize();
+    std::shared_ptr<Filter<Of>> operator||(const std::shared_ptr<Filter<Of>> &rhs);
 };
+
+template <typename Of, typename T>
+std::shared_ptr<Filter<Of>> ActualFilter<Of, T>::operator||(const std::shared_ptr<Filter<Of>> &rhs)
+{
+    return std::make_shared<ActualFilter<Of, T>>(ActualFilter<Of, T>{});
+}
 
 template <typename Of, typename T>
 struct ActualFilter<Of, std::initializer_list<T>>: public Filter<Of>
@@ -85,7 +108,14 @@ struct ActualFilter<Of, std::initializer_list<T>>: public Filter<Of>
     std::string op;
     Field<Of, T> f;
     std::string serialize();
+    std::shared_ptr<Filter<Of>> operator||(const std::shared_ptr<Filter<Of>> &rhs);
 };
+
+template <typename Of, typename T>
+std::shared_ptr<Filter<Of>> ActualFilter<Of, std::initializer_list<T>>::operator||(const std::shared_ptr<Filter<Of>> &rhs)
+{
+    return std::make_shared<ActualFilter<Of, T>>(ActualFilter<Of, T>{});
+}
 
 template<typename Of, typename T>
 std::string ActualFilter<Of, T>::serialize()
