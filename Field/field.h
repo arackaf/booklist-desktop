@@ -100,31 +100,39 @@ std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &l
     return lhs;
 }
 
+template <typename FilterLHS, typename FilterRHS, typename A = typename FilterLHS::FilterType, typename B = typename FilterRHS::FilterType>
+decltype(auto) operator ||(const std::shared_ptr<FilterLHS> &lhs, const std::shared_ptr<FilterRHS> &rhs)
+{
+    using Of = typename FilterLHS::OfType;
+    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
+}
+
+
 //GENERIC CASES A
 
-template <typename Of>
-std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<AndFilter<Of>> &lhs, const std::shared_ptr<AndFilter<Of>> &rhs)
-{
-    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
-}
+//template <typename Of>
+//std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<AndFilter<Of>> &lhs, const std::shared_ptr<AndFilter<Of>> &rhs)
+//{
+//    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
+//}
 
-template <typename Of, typename T>
-std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<AndFilter<Of>> &rhs)
-{
-    return rhs || lhs;
-}
+//template <typename Of, typename T>
+//std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<AndFilter<Of>> &rhs)
+//{
+//    return rhs || lhs;
+//}
 
-template <typename Of, typename T>
-std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<AndFilter<Of>> &lhs, const std::shared_ptr<ActualFilter<Of, T>> &rhs)
-{
-    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
-}
+//template <typename Of, typename T>
+//std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<AndFilter<Of>> &lhs, const std::shared_ptr<ActualFilter<Of, T>> &rhs)
+//{
+//    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
+//}
 
-template <typename Of, typename T, typename U>
-std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<ActualFilter<Of, U>> &rhs)
-{
-    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
-}
+//template <typename Of, typename T, typename U>
+//std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<ActualFilter<Of, U>> &rhs)
+//{
+//    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
+//}
 
 //  operator &&
 

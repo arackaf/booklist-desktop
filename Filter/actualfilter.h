@@ -19,6 +19,7 @@ struct NumericField;
 template <typename Of, typename T>
 struct ActualFilter: public Filter<Of>
 {
+    using FilterType = ActualFilter<Of, T>;
     ActualFilter(Field<Of, T> f, T val, std::string op) : val(val), op(op), f(f) {}
     T val;
     std::string op;
@@ -29,6 +30,7 @@ struct ActualFilter: public Filter<Of>
 template <typename Of, typename T>
 struct ActualFilter<Of, std::initializer_list<T>>: public Filter<Of>
 {
+    using FilterType = ActualFilter<Of, std::initializer_list<T>>;
     ActualFilter(Field<Of, T> f, const std::initializer_list<T> &val, std::string op) : val(val), op(op), f(f) {}
     std::initializer_list<T> val;
     std::string op;
