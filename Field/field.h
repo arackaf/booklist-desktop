@@ -100,15 +100,13 @@ std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &l
     return lhs;
 }
 
-template <typename FilterLHS, typename FilterRHS, typename A = typename FilterLHS::FilterType, typename B = typename FilterRHS::FilterType>
+//Single template operator replaces the four commented out, below it :D
+template <typename FilterLHS, typename FilterRHS, std::enable_if_t<std::is_same_v<typename FilterLHS::OfType, typename FilterRHS::OfType>, int> = 0>
 decltype(auto) operator ||(const std::shared_ptr<FilterLHS> &lhs, const std::shared_ptr<FilterRHS> &rhs)
 {
     using Of = typename FilterLHS::OfType;
     return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
 }
-
-
-//GENERIC CASES A
 
 //template <typename Of>
 //std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<AndFilter<Of>> &lhs, const std::shared_ptr<AndFilter<Of>> &rhs)
