@@ -65,15 +65,18 @@ MainWindow::MainWindow(QWidget *parent) :
     auto q = makeFilter(
 //        (weight < 10 || pages < 500) && (pages < 100 || weight < 90),
 //        title == "Hello World",
-        weight < 50 || weight < 100,
+        weight < 50 || weight < 100 || weight < 100,
+        weight < 50 || weight < 100 || weight < 110 || weight < 120,
         weight < 10 || (weight < 50 || weight < 100),
         (weight < 10 || weight < 50) || weight < 100,
+        (weight < 10 || weight < 50) || (weight < 100 || weight < 110),
 
         weight < 50 && weight < 100,
         weight < 10 && (weight < 50 && weight < 100),
         (weight < 10 && weight < 50) && weight < 100,
 
         weight < 50 || (weight < 100 && weight < 200),
+        weight < 50 || weight < 60 || (weight < 100 && weight < 200),
         (weight < 50 || weight < 100) && weight < 200,
 
 //        title == "Hello World",
@@ -112,10 +115,11 @@ MainWindow::MainWindow(QWidget *parent) :
     //Query<Books> qb{ pages == 20, FilterList<Books>{ weight < 10, weight < 50 } };
     //Query<Books> qb{ pages == 20, std::make_shared<OrFilter<Books>>(OrFilter<Books>{ weight < 10, weight < 50 }) };
 
+    int i = 1;
     std::string message = "";
     for (const auto &el : q.filters)
     {
-        message += el->serialize() + "\n\n";
+        message += std::to_string(i++) + ": " + el->serialize() + "\n\n";
     }
 
 

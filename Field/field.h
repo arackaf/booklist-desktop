@@ -91,7 +91,19 @@ std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &l
 
 // ----------
 
-//SPECIAL CASES
+//Single template operator replaces the four commented out, below it :D
+template
+<
+    typename FilterLHS,
+    typename FilterRHS,
+    typename Of = typename FilterLHS::OfType,
+    std::enable_if_t<std::is_base_of_v<Filter<Of>, FilterLHS> && std::is_base_of_v<Filter<Of>, FilterRHS>, int> = 0
+>
+std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<FilterLHS> &lhs, const std::shared_ptr<FilterRHS> &rhs)
+{
+    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
+}
+
 
 template <typename Of>
 std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &lhs, const std::shared_ptr<OrFilter<Of>> &rhs)
@@ -100,13 +112,6 @@ std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &l
     return lhs;
 }
 
-//Single template operator replaces the four commented out, below it :D
-template <typename FilterLHS, typename FilterRHS, std::enable_if_t<std::is_same_v<typename FilterLHS::OfType, typename FilterRHS::OfType>, int> = 0>
-decltype(auto) operator ||(const std::shared_ptr<FilterLHS> &lhs, const std::shared_ptr<FilterRHS> &rhs)
-{
-    using Of = typename FilterLHS::OfType;
-    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
-}
 
 //template <typename Of>
 //std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<AndFilter<Of>> &lhs, const std::shared_ptr<AndFilter<Of>> &rhs)
