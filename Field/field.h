@@ -80,13 +80,13 @@ std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of,
     return rhs || lhs;
 }
 
+
 template <typename Of, typename T>
 std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &lhs, const std::shared_ptr<ActualFilter<Of, T>> &rhs)
 {
     lhs->filters.push_back(rhs);
     return lhs;
 }
-
 
 
 // ----------
@@ -104,13 +104,6 @@ std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<FilterLHS> &lhs,
     return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
 }
 
-
-template <typename Of>
-std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &lhs, const std::shared_ptr<OrFilter<Of>> &rhs)
-{
-    lhs->filters.push_back(rhs);
-    return lhs;
-}
 
 
 //template <typename Of>
@@ -136,6 +129,16 @@ std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &l
 //{
 //    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
 //}
+
+//template <typename Of>
+//std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &lhs, const std::shared_ptr<OrFilter<Of>> &rhs)
+//{
+//    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
+//}
+
+
+
+
 
 //  operator &&
 

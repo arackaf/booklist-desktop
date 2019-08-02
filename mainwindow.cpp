@@ -77,6 +77,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
         weight < 50 || (weight < 100 && weight < 200),
         weight < 50 || weight < 60 || (weight < 100 && weight < 200),
+        (weight < 50 || weight < 60) || (weight < 100 && weight < 200),
         (weight < 50 || weight < 100) && weight < 200,
 
 //        title == "Hello World",
