@@ -32,6 +32,7 @@ ActualFilter(Field<Of, FieldType>, FilterValueType, std::string) -> ActualFilter
 template <typename Of, typename FieldType>
 ActualFilter(Field<Of, FieldType>, std::initializer_list<FieldType>, std::string) -> ActualFilter<Of, FieldType, std::initializer_list<FieldType>>;
 
+
 template<typename Of, typename FieldType, typename FilterValueType>
 std::string ActualFilter<Of, FieldType, FilterValueType>::serialize()
 {
@@ -39,7 +40,7 @@ std::string ActualFilter<Of, FieldType, FilterValueType>::serialize()
 }
 
 template<typename Of, typename FieldType, typename FilterValueType>
-std::string serializeActualFilter(const std::string &op, Field<Of, FieldType> f, FilterValueType val)
+std::string serializeActualFilter(const std::string &op, const Field<Of, FieldType> &f, const FilterValueType &val)
 {
 
     auto res = opLookup.find(op);
@@ -52,7 +53,7 @@ std::string serializeActualFilter(const std::string &op, Field<Of, FieldType> f,
 }
 
 template<typename Of, typename FieldType>
-std::string serializeActualFilter(const std::string &op, Field<Of, FieldType> f, std::initializer_list<FieldType> val)
+std::string serializeActualFilter(const std::string &op, const Field<Of, FieldType> &f, const std::initializer_list<FieldType> &val)
 {
     auto res = opLookup.find(op);
     if (res == opLookup.end())
