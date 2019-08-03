@@ -36,6 +36,8 @@ HEADERS += \
         Filter/actualfilter.h \
         Filter/filter.h \
         Filter/filterutils.h \
+        Filter/operatorless.h \
+        Filter/operatoror.h \
         Filters/filter.h \
         MongoTypes/booktable.h \
         Query/mongoquerybase.h \
