@@ -26,9 +26,6 @@ struct ActualFilter: public Filter<Of>
     std::string serialize() override;
 };
 
-template <typename Of, typename FieldType, typename FilterValueType = FieldType>
-ActualFilter(Field<Of, FieldType>, FilterValueType, std::string) -> ActualFilter<Of, FieldType, FilterValueType>;
-
 template <typename Of, typename FieldType>
 ActualFilter(Field<Of, FieldType>, std::initializer_list<FieldType>, std::string) -> ActualFilter<Of, FieldType, std::initializer_list<FieldType>>;
 
