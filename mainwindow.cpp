@@ -17,11 +17,27 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
     return size * nmemb;
 }
 
+extern std::string S;
+inline std::string S = "";
+
+void foo (std::string s){
+    S += s;
+}
+
+template <typename ...Ts>
+void callFoo(Ts... args)
+{
+    (... , foo(args));
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    callFoo("a", "b", "c", "d", "e");
+
 
     std::string url = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
     std::string url2 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%2050)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
@@ -117,7 +133,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //Query<Books> qb{ pages == 20, std::make_shared<OrFilter<Books>>(OrFilter<Books>{ weight < 10, weight < 50 }) };
 
     int i = 1;
-    std::string message = "";
+    std::string message = S + "\n\n";
     for (const auto &el : q.filters)
     {
         message += std::to_string(i++) + ": " + el->serialize() + "\n\n";
