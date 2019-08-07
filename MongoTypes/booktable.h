@@ -6,9 +6,7 @@
 namespace Data {
 namespace Books {
 
-class Books
-{
-};
+class Books {};
 
 //TODO: create these with a Macro
 extern Field<Books, std::string> title;
@@ -30,4 +28,15 @@ extern ArrayField<Books, std::string> authors;
 inline ArrayField<Books, std::string> authors = ArrayField<Books, std::string>{ "authors" };
 
 }
+
+namespace Subjects {
+
+class Subjects{};
+
+extern Field<Subjects, std::string> name;
+inline Field<Subjects, std::string> name = Field<Subjects, std::string> { "name" };
+
+}
+
+
 }
