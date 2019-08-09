@@ -3,31 +3,45 @@
 #include "mongoquerybase.h"
 #include "field.h"
 
+
+#define BookList \
+    Field(title, std::string) \
+    Field(smallImage, std::string) \
+    Field(mediumImage, std::string) \
+    Field(pages, int) \
+    Field(edition, int) \
+    Field(weight, double) \
+    ArrayField(authors, std::string)
+
 namespace Data {
+
+// ------------------------------ All Types' Classes -----------------------------------------
+
+
 namespace Books {
+    class Books {};
+}
 
-class Books
-{
-};
+//#define Field(name) FilterDeclaration(name, double);
+//#define ArrayField(name) ArrayFilterDeclaration(name, std::string);
 
-//TODO: create these with a Macro
-extern Field<Books, std::string> title;
-inline Field<Books, std::string> title = Field<Books, std::string> { "title" };
+// ------------------------------ End Types' Classes -----------------------------------------
 
-extern Field<Books, std::string> smallImage;
-inline Field<Books, std::string> smallImage = Field<Books, std::string>{ "smallImage" };
 
-extern Field<Books, int> pages;
-inline Field<Books, int> pages = Field<Books, int>{ "pages" };
+#define FilterDeclaration(name, type) extern FieldOf(type) name; \
+    inline FieldOf(type) name = FieldOf(type) { "name" };
+#define ArrayFilterDeclaration(name, type) extern ArrayFieldOf(type) name; \
+    inline ArrayFieldOf(type) name = ArrayFieldOf(type) { "name" };
 
-extern Field<Books, int> edition;
-inline Field<Books, int> edition = Field<Books, int>{ "edition" };
+#define Field(name, type) FilterDeclaration(name, type);
+#define ArrayField(name, type) ArrayFilterDeclaration(name, type);
 
-extern Field<Books, double> weight;
-inline Field<Books, double> weight = Field<Books, double>{ "weight" };
+// ------------------------------- All Types' Filters ----------------------------------------
 
-extern ArrayField<Books, std::string> authors;
-inline ArrayField<Books, std::string> authors = ArrayField<Books, std::string>{ "authors" };
+#define FieldOf(type) Field<Books, type>
+#define ArrayFieldOf(type) ArrayField<Books, type>
 
+namespace Books {
+BookList
 }
 }
