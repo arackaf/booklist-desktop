@@ -7,14 +7,14 @@
 namespace Data {
 namespace Books {
 
-struct Books
+struct Book
 {
     std::string _id;
     std::string title;
     int pages;
 };
 
-void from_json(const nlohmann::json &j, Books &b)
+void from_json(const nlohmann::json &j, Book &b)
 {
     auto _id = j.at("_id");
     b._id = _id.empty() ? std::string{} : _id.get<std::string>();
@@ -27,23 +27,23 @@ void from_json(const nlohmann::json &j, Books &b)
 }
 
 //TODO: create these with a Macro
-extern Field<Books, std::string> title;
-inline Field<Books, std::string> title = Field<Books, std::string> { "title" };
+extern Field<Book, std::string> title;
+inline Field<Book, std::string> title = Field<Book, std::string> { "title" };
 
-extern Field<Books, std::string> smallImage;
-inline Field<Books, std::string> smallImage = Field<Books, std::string>{ "smallImage" };
+extern Field<Book, std::string> smallImage;
+inline Field<Book, std::string> smallImage = Field<Book, std::string>{ "smallImage" };
 
-extern Field<Books, int> pages;
-inline Field<Books, int> pages = Field<Books, int>{ "pages" };
+extern Field<Book, int> pages;
+inline Field<Book, int> pages = Field<Book, int>{ "pages" };
 
-extern Field<Books, int> edition;
-inline Field<Books, int> edition = Field<Books, int>{ "edition" };
+extern Field<Book, int> edition;
+inline Field<Book, int> edition = Field<Book, int>{ "edition" };
 
-extern Field<Books, double> weight;
-inline Field<Books, double> weight = Field<Books, double>{ "weight" };
+extern Field<Book, double> weight;
+inline Field<Book, double> weight = Field<Book, double>{ "weight" };
 
-extern ArrayField<Books, std::string> authors;
-inline ArrayField<Books, std::string> authors = ArrayField<Books, std::string>{ "authors" };
+extern ArrayField<Book, std::string> authors;
+inline ArrayField<Book, std::string> authors = ArrayField<Book, std::string>{ "authors" };
 
 }
 }

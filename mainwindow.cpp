@@ -108,8 +108,8 @@ MainWindow::MainWindow(QWidget *parent) :
     );
 
     //std::shared_ptr<Filter<Books>> x = weight < 10 || weight < 50;
-    std::shared_ptr<ActualFilter<Books, double>> x = weight < 10;
-    std::shared_ptr<ActualFilter<Books, double>> y = weight < 10;
+    std::shared_ptr<ActualFilter<Book, double>> x = weight < 10;
+    std::shared_ptr<ActualFilter<Book, double>> y = weight < 10;
 
 
 
