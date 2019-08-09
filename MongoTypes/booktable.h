@@ -4,7 +4,6 @@
 #include "field.h"
 #include <json.hpp>
 
-
 #define BookList \
     Field(title, std::string) \
     Field(smallImage, std::string) \
@@ -20,22 +19,12 @@ namespace Data {
 
 
 namespace Books {
-    struct Books {
+    struct Book
+    {
         std::string _id;
         std::string title;
         int pages;
     };
-    
-    void from_json(const nlohmann::json &j, Books &b) {
-        auto _id = j.at("_id");
-        b._id = _id.empty() ? std::string{} : _id.get<std::string>();
-        
-        auto title = j.at("title");
-        b.title = title.empty() ? std::string{} : title.get<std::string>();
-        
-        auto pages = j.at("pages");
-        b.pages = pages.empty() ? int{} : pages.get<int>();
-    }
 }
 
 
@@ -44,8 +33,28 @@ namespace Books {
 
 // ------------------------------ End Types' Classes -----------------------------------------
 
+// ------------------------------ All Type's Serializations ----------------------------------
 
+namespace Books {
 
+void from_json(const nlohmann::json &j, Book &b)
+{
+    auto _id = j.at("_id");
+    b._id = _id.empty() ? std::string{} : _id.get<std::string>();
+    
+    auto title = j.at("title");
+    b.title = title.empty() ? std::string{} : title.get<std::string>();
+    
+    auto pages = j.at("pages");
+    b.pages = pages.empty() ? int{} : pages.get<int>();
+}
+
+}
+
+// ------------------------------ End Types' Serializations -------------------------------------
+    
+// ------------------------------- All Types' Filters -------------------------------------------
+    
 #define FilterDeclaration(name, type) extern FieldOf(type) name; \
     inline FieldOf(type) name = FieldOf(type) { "name" };
 #define ArrayFilterDeclaration(name, type) extern ArrayFieldOf(type) name; \
@@ -54,10 +63,10 @@ namespace Books {
 #define Field(name, type) FilterDeclaration(name, type);
 #define ArrayField(name, type) ArrayFilterDeclaration(name, type);
 
-// ------------------------------- All Types' Filters ----------------------------------------
+// -----------------------------------------------------------------------
 
-#define FieldOf(type) Field<Books, type>
-#define ArrayFieldOf(type) ArrayField<Books, type>
+#define FieldOf(type) Field<Book, type>
+#define ArrayFieldOf(type) ArrayField<Book, type>
 
 namespace Books {
 BookList
