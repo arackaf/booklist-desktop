@@ -49,6 +49,25 @@ MainWindow::MainWindow(QWidget *parent) :
       //ui->textEdit->setPlainText(QString { readBuffer.c_str() });
 
       auto j2 = json::parse(readBuffer);
+
+      auto dataMaybe = j2.find("data");
+      auto allBooksMaybe = dataMaybe->find("allBooks");
+      auto BooksMaybe = allBooksMaybe->find("Books");
+
+      auto firstBook = BooksMaybe->at(0);
+
+      auto titleMaybe = firstBook.find("title");
+      auto titleMaybe2 = firstBook["title"].get<std::string>();
+      auto pleaseDontCrash = firstBook["notHere"];
+
+      auto titleprotect = firstBook["title"].empty();
+      auto crashProtect = pleaseDontCrash.empty();
+
+      Data::Books::Books b = firstBook;
+
+
+      size_t booksLength = BooksMaybe->size();
+
       auto x = j2.begin();
 
       auto y = *x;

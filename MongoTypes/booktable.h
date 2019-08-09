@@ -2,13 +2,27 @@
 
 #include "mongoquerybase.h"
 #include "field.h"
+#include <json.hpp>
 
 namespace Data {
 namespace Books {
 
-class Books
-{
+struct Books {
+    std::string _id;
+    std::string title;
+    int pages;
 };
+
+void from_json(const nlohmann::json &j, Books &b) {
+    auto _id = j.at("_id");
+    b._id = _id.empty() ? std::string{} : _id.get<std::string>();
+
+    auto title = j.at("title");
+    b.title = title.empty() ? std::string{} : title.get<std::string>();
+
+    auto pages = j.at("pages");
+    b.pages = pages.empty() ? int{} : pages.get<int>();
+}
 
 //TODO: create these with a Macro
 extern Field<Books, std::string> title;
