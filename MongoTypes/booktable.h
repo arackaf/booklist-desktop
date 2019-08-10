@@ -59,20 +59,22 @@ void from_json(const nlohmann::json &j, Book &b)
     
 // ------------------------------- All Types' Filters -------------------------------------------
     
-#define FilterDeclaration(name, type) extern FieldOf(type) name; \
-    inline FieldOf(type) name = FieldOf(type) { "name" };
-#define ArrayFilterDeclaration(name, type) extern ArrayFieldOf(type) name; \
-    inline ArrayFieldOf(type) name = ArrayFieldOf(type) { "name" };
+#define FilterDeclaration(name, type) extern Field<CURRENT_TYPE, type> name; \
+    inline Field<CURRENT_TYPE, type> name = Field<CURRENT_TYPE, type> { "name" };
+#define ArrayFilterDeclaration(name, type) extern ArrayField<CURRENT_TYPE, type> name; \
+    inline ArrayField<CURRENT_TYPE, type> name = ArrayField<CURRENT_TYPE, type> { "name" };
 
 #define Field(name, type) FilterDeclaration(name, type);
 #define ArrayField(name, type) ArrayFilterDeclaration(name, type);
 
+#define FILTERS(namespaceName, Expansion) namespace namespaceName { \
+    Expansion \
+}
+
+
 // -----------------------------------------------------------------------
 
-#define FieldOf(type) Field<Book, type>
-#define ArrayFieldOf(type) ArrayField<Book, type>
+#define CURRENT_TYPE Book
+FILTERS(Books, BookList)
 
-namespace Books {
-BookList
-}
 }
