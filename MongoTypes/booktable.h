@@ -24,6 +24,7 @@ namespace Books {
         std::string _id;
         std::string title;
         int pages;
+        std::vector<std::string> authors;
     };
 }
 
@@ -47,6 +48,9 @@ void from_json(const nlohmann::json &j, Book &b)
     
     auto pages = j.at("pages");
     b.pages = pages.empty() ? int{} : pages.get<int>();
+
+    auto authors = j.at("authors");
+    b.authors = authors.empty() ? std::initializer_list<std::string>{} : authors.get<std::vector<std::string>>();
 }
 
 }
