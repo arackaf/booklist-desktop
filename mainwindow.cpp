@@ -53,11 +53,27 @@ QVariant ListModel::data(const QModelIndex &index, int role) const
 
 struct BookViewDelegate : public QStyledItemDelegate
 {
-     BookViewDelegate(QObject* parent = 0) : QStyledItemDelegate(parent) {}
+     BookViewDelegate(int height, QObject* parent = 0) : QStyledItemDelegate(parent), height(height) {}
+
+     int height;
 
      QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
      {
-         return QSize(0, 160); //enter your values here
+         return QSize(0, height); //enter your values here
+     }
+
+     inline void paintXXX(QPainter *painter, const QStyleOptionViewItem &option,
+                       const QModelIndex &index ) const
+     {
+         // Set up a QStyleOptionProgressBar to precisely mimic the
+         // environment of a progress bar.
+         QStyleOptionButton boptions;
+         boptions.text = "My Buttonnnnnnnnn";
+         boptions.rect = option.rect;
+
+
+         // Draw the progress bar onto the view.
+         QApplication::style()->drawControl(QStyle::CE_PushButton, &boptions, painter);
      }
 };
 
@@ -178,11 +194,14 @@ MainWindow::MainWindow(QWidget *parent) :
     auto w = new QWidget();
     auto v = new QVBoxLayout{};
     v->addWidget(new QPushButton{"Heyooooo"});
+    v->addWidget(new QLabel{"Hi there"});
+    v->addWidget(new QPushButton{"Button 2"});
+
     w->setLayout(v);
 
 
     ui->listView->setIndexWidget(model->index(0), w);
-    ui->listView->setItemDelegate(new BookViewDelegate(this));
+    ui->listView->setItemDelegate(new BookViewDelegate(v->sizeHint().height(), this));
 }
 
 
