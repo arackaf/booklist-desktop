@@ -11,10 +11,42 @@ using json = nlohmann::json;
 #include "mongoquerybase.h"
 #include "booktable.h"
 
+#include <QAbstractListModel>
+#include <QStandardItemModel>
+#include <QStringList>
+
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
     ((std::string*)userp)->append((char*)contents, size * nmemb);
     return size * nmemb;
+}
+
+using Data::Books::Book;
+
+class ListModel : public QAbstractListModel
+{
+private:
+    std::vector<Book> books;
+public:
+    ListModel(QObject *parent) : QAbstractListModel(parent), books({ Book{}, Book{}, Book{} }) {}
+    int rowCount(const QModelIndex &) const override;
+
+    QVariant data(const QModelIndex &index, int = Qt::DisplayRole) const override;
+};
+
+int ListModel::rowCount(const QModelIndex &) const
+{
+    return 3;
+}
+
+QVariant ListModel::data(const QModelIndex &index, int role) const
+{
+    return QVariant{};
+    //return books[index.row()];
+    if (role == Qt::DisplayRole ) {
+        return QString{ "Hello " };
+    }
+    return QVariant{};
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -125,7 +157,34 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     ui->textEdit->setPlainText(QString { (message + "\n\n" + q.serialize()).c_str() });
+
+    ListModel *model = new ListModel(nullptr);
+
+
+
+    //ui->listView->setIndexWidget(model->indexFromItem());
+    //model->setItem(0, QString{ "Hello" });
+
+//    model->setItem(0, 0, new QStandardItem(QString{"A"}));
+//    model->setItem(1, 1, new QStandardItem(QString{"B"}));
+//    model->setItem(2, 2, new QStandardItem(QString{"C"}));
+    ui->listView->setModel(model);
+    ui->listView->setIndexWidget(model->index(0), new QPushButton{ "Yo" });
+
+    //ui->listView->setRootIndex(model->index(0));
+
+
+
+    ui->listWidget->addItem(QString{ "Hello 1" });
+    ui->listWidget->addItem(QString{ "Hello 2" });
+    ui->listWidget->addItem(QString{ "Hello 3" });
+
+    ui->listWidget->setItemWidget(ui->listWidget->takeItem(0), new QPushButton{ "PUSH ME" });
+
 }
+
+
+
 
 MainWindow::~MainWindow()
 {
