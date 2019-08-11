@@ -14,6 +14,8 @@ using json = nlohmann::json;
 #include <QAbstractListModel>
 #include <QStandardItemModel>
 #include <QStringList>
+#include <QVBoxLayout>
+#include <QStyledItemDelegate>
 
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
@@ -48,6 +50,16 @@ QVariant ListModel::data(const QModelIndex &index, int role) const
     }
     return QVariant{};
 }
+
+struct BookViewDelegate : public QStyledItemDelegate
+{
+     BookViewDelegate(QObject* parent = 0) : QStyledItemDelegate(parent) {}
+
+     QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
+     {
+         return QSize(0, 160); //enter your values here
+     }
+};
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -160,27 +172,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ListModel *model = new ListModel(nullptr);
 
-
-
-    //ui->listView->setIndexWidget(model->indexFromItem());
-    //model->setItem(0, QString{ "Hello" });
-
-//    model->setItem(0, 0, new QStandardItem(QString{"A"}));
-//    model->setItem(1, 1, new QStandardItem(QString{"B"}));
-//    model->setItem(2, 2, new QStandardItem(QString{"C"}));
     ui->listView->setModel(model);
-    ui->listView->setIndexWidget(model->index(0), new QPushButton{ "Yo" });
-
-    //ui->listView->setRootIndex(model->index(0));
 
 
+    auto w = new QWidget();
+    auto v = new QVBoxLayout{};
+    v->addWidget(new QPushButton{"Heyooooo"});
+    w->setLayout(v);
 
-    ui->listWidget->addItem(QString{ "Hello 1" });
-    ui->listWidget->addItem(QString{ "Hello 2" });
-    ui->listWidget->addItem(QString{ "Hello 3" });
 
-    ui->listWidget->setItemWidget(ui->listWidget->takeItem(0), new QPushButton{ "PUSH ME" });
-
+    ui->listView->setIndexWidget(model->index(0), w);
+    ui->listView->setItemDelegate(new BookViewDelegate(this));
 }
 
 

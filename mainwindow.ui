@@ -63,20 +63,10 @@
    <widget class="QListView" name="listView">
     <property name="geometry">
      <rect>
-      <x>360</x>
+      <x>140</x>
       <y>400</y>
-      <width>211</width>
+      <width>431</width>
       <height>161</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="listWidget">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>400</y>
-      <width>211</width>
-      <height>151</height>
      </rect>
     </property>
    </widget>
