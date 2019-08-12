@@ -77,10 +77,41 @@ struct BookViewDelegate : public QStyledItemDelegate
      }
 };
 
+template <typename T>
+struct MyString
+{
+    MyString(T) {}
+    MyString() {}
+    //MyString(T){}
+};
+
+template <typename T>
+MyString<T> truncate(MyString<T> const &a, int len)
+{
+    return MyString<T>{};
+}
+
+int truncate(int a, int b)
+{
+    return a + b;
+}
+
+void test()
+{
+    MyString<int> str1;
+    //str1 = truncate<char>("Hello", 5);
+    truncate(1, 5);
+}
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+
+    //double resB = add(1, 2);
+
+
     ui->setupUi(this);
 
     std::string url = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
