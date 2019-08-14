@@ -28,21 +28,6 @@ struct Field
 };
 
 template <typename Of, typename T>
-struct NumericField : public Field<Of, T> {};
-
-template <typename Of>
-struct NumericField<Of, int> : public Field<Of, int>
-{
-    using Field<Of, int>::Field;
-};
-
-template <typename Of>
-struct NumericField<Of, double> : public Field<Of, double>
-{
-    using Field<Of, double>::Field;
-};
-
-template <typename Of, typename T>
 struct ArrayField : public Field<Of, T>
 {
     using Field<Of, T>::Field;
