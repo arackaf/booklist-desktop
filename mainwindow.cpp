@@ -86,7 +86,7 @@ MainWindow::MainWindow(QWidget *parent) :
     std::string url = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
     std::string url2 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%2050)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
     std::string url3 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%205)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
-    std::string url4 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
+    std::string url4 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20pages%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
     //auto res = system(command.c_str());
 
     CURL *curl;
@@ -94,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent) :
     std::string readBuffer;
 
     curl = curl_easy_init();
-    if(false && curl) {
+    if(curl) {
       curl_easy_setopt(curl, CURLOPT_URL, url4.c_str());
       curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
       curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
@@ -109,6 +109,25 @@ MainWindow::MainWindow(QWidget *parent) :
       //ui->textEdit->setPlainText(QString { readBuffer.c_str() });
 
       auto j2 = json::parse(readBuffer);
+
+      auto dataMaybe = j2.find("data");
+      auto allBooksMaybe = dataMaybe->find("allBooks");
+      auto BooksMaybe = allBooksMaybe->find("Books");
+
+      auto firstBook = BooksMaybe->at(0);
+
+      auto titleMaybe = firstBook.find("title");
+      auto titleMaybe2 = firstBook["title"].get<std::string>();
+      auto pleaseDontCrash = firstBook["notHere"];
+
+      auto titleprotect = firstBook["title"].empty();
+      auto crashProtect = pleaseDontCrash.empty();
+
+      Data::Books::Book b = firstBook;
+
+
+      size_t booksLength = BooksMaybe->size();
+
       auto x = j2.begin();
 
       auto y = *x;
@@ -116,7 +135,20 @@ MainWindow::MainWindow(QWidget *parent) :
       auto z = y.begin();
       auto zz = *z;
 
+      auto BooksBegin = zz.begin();
+      auto Books = *BooksBegin;
+
+      auto BooksArrayBegin = Books.begin();
+      auto BooksArr = *BooksArrayBegin;
+
+      for (auto el = BooksArr.begin(); el != BooksArr.end(); el++)
+      {
+          auto X = *el;
+          int k = 12;
+      }
+
       int i = 12;
+      i++;
     }
 
     using namespace Data::Books;
@@ -124,7 +156,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     auto q = makeFilter(
 //        (weight < 10 || pages < 500) && (pages < 100 || weight < 90),
+
         title == "Hello World",
+
+        //Data::Subjects::name == "junk",
+
         weight < 50 || weight < 100 || weight < 100,
         weight < 50 || weight < 100 || weight < 110 || weight < 120,
         weight < 10 || (weight < 50 || weight < 100),
