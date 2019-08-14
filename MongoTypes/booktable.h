@@ -16,7 +16,7 @@
 
 namespace Data {
 
-// ------------------------------ All Types' Classes -----------------------------------------
+// ------------------------------ Type Classes -----------------------------------------
 
 #define Field(name, type) type name;
 #define ArrayField(name, type) std::vector<type> name;
@@ -33,36 +33,24 @@ CLASS(Books, Book, BookList)
 #undef ArrayField
 
 
-//#define Field(name) FilterDeclaration(name, double);
-//#define ArrayField(name) ArrayFilterDeclaration(name, std::string);
+// ------------------------------ Type Serializations ----------------------------------
 
-// ------------------------------ End Types' Classes -----------------------------------------
+#define Field(name, type) obj.name = j.contains(#name) ? j.at(#name).get<type>() : type{};
+#define ArrayField(name, type) obj.name = j.contains(#name) ? j.at(#name).get<std::vector<type>>() : std::initializer_list<type>{};
 
-// ------------------------------ All Type's Serializations ----------------------------------
-
-namespace Books {
-
-void from_json(const nlohmann::json &j, Book &b)
-{
-    auto _id = j.at("_id");
-    b._id = _id.empty() ? std::string{} : _id.get<std::string>();
-    
-    auto title = j.at("title");
-    b.title = title.empty() ? std::string{} : title.get<std::string>();
-    
-    auto pages = j.at("pages");
-    b.pages = pages.empty() ? int{} : pages.get<int>();
-
-    auto authors = j.at("authors");
-    b.authors = authors.empty() ? std::initializer_list<std::string>{} : authors.get<std::vector<std::string>>();
+#define SERIALIZE(namespaceName, className, Expansion) namespace namespaceName { \
+    void from_json(const nlohmann::json &j, className &obj) { \
+        Expansion \
+    } \
 }
 
-}
+SERIALIZE(Books, Book, BookList)
 
-// ------------------------------ End Types' Serializations -------------------------------------
+#undef Field
+#undef ArrayField
+
     
-// ------------------------------- All Types' Filters -------------------------------------------
-
+// ------------------------------- Type Filters -------------------------------------------
 
 
 #define Field(name, type) extern ScopedField<type> name; \
@@ -79,8 +67,12 @@ void from_json(const nlohmann::json &j, Book &b)
     Expansion \
 }
 
-// ---------------------------- for each type ---------------------------------
+
 
 FILTERS(Books, Book, BookList)
+
+
+#undef Field
+#undef ArrayField
 
 }
