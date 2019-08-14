@@ -2,33 +2,82 @@
 
 #include "mongoquerybase.h"
 #include "field.h"
+#include <json.hpp>
+
+#define BookList \
+    Field(_id, std::string) \
+    Field(title, std::string) \
+    Field(smallImage, std::string) \
+    Field(mediumImage, std::string) \
+    Field(pages, int) \
+    Field(edition, int) \
+    Field(weight, double) \
+    ArrayField(authors, std::string)
+
 
 namespace Data {
-namespace Books {
 
-class Books {};
 
-//TODO: create these with a Macro
-extern Field<Books, std::string> title;
-inline Field<Books, std::string> title = Field<Books, std::string> { "title" };
+// ------------------------------ Type Classes -----------------------------------------
 
-extern Field<Books, std::string> smallImage;
-inline Field<Books, std::string> smallImage = Field<Books, std::string>{ "smallImage" };
 
-extern Field<Books, int> pages;
-inline Field<Books, int> pages = Field<Books, int>{ "pages" };
+#define Field(name, type) type name;
+#define ArrayField(name, type) std::vector<type> name;
 
-extern Field<Books, int> edition;
-inline Field<Books, int> edition = Field<Books, int>{ "edition" };
-
-extern Field<Books, double> weight;
-inline Field<Books, double> weight = Field<Books, double>{ "weight" };
-
-extern ArrayField<Books, std::string> authors;
-inline ArrayField<Books, std::string> authors = ArrayField<Books, std::string>{ "authors" };
-
+#define CLASS(namespaceName, className, Expansion) namespace namespaceName { \
+    struct className { \
+        Expansion \
+    }; \
 }
 
+CLASS(Books, Book, BookList)
+
+#undef Field
+#undef ArrayField
+
+
+// ------------------------------ Type Serializations ----------------------------------
+
+
+#define Field(name, type) obj.name = j.contains(#name) ? j.at(#name).get<type>() : type{};
+#define ArrayField(name, type) obj.name = j.contains(#name) ? j.at(#name).get<std::vector<type>>() : std::initializer_list<type>{};
+
+#define SERIALIZE(namespaceName, className, Expansion) namespace namespaceName { \
+    void from_json(const nlohmann::json &j, className &obj) { \
+        Expansion \
+    } \
+}
+
+SERIALIZE(Books, Book, BookList)
+
+#undef Field
+#undef ArrayField
+
+    
+// ------------------------------- Type Filters -------------------------------------------
+
+
+#define Field(name, type) extern ScopedField<type> name; \
+    inline ScopedField<type> name = ScopedField<type> { #name };
+
+#define ArrayField(name, type) extern ScopedArrayField<type> name; \
+    inline ScopedArrayField<type> name = ScopedArrayField<type> { #name };
+
+#define FILTERS(namespaceName, className, Expansion) namespace namespaceName { \
+    template <typename T> \
+    using ScopedField = Field<className, T>; \
+    template <typename T> \
+    using ScopedArrayField = ArrayField<className, T>; \
+    Expansion \
+}
+
+FILTERS(Books, Book, BookList)
+
+#undef Field
+#undef ArrayField
+
+
+//TDOD: properly redefine
 namespace Subjects {
 
 class Subjects{};
@@ -37,6 +86,5 @@ extern Field<Subjects, std::string> name;
 inline Field<Subjects, std::string> name = Field<Subjects, std::string> { "name" };
 
 }
-
 
 }
