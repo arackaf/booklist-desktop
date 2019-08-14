@@ -4,46 +4,76 @@
 #include "field.h"
 #include <json.hpp>
 
+#define BookList \
+    Field(_id, std::string) \
+    Field(title, std::string) \
+    Field(smallImage, std::string) \
+    Field(mediumImage, std::string) \
+    Field(pages, int) \
+    Field(edition, int) \
+    Field(weight, double) \
+    ArrayField(authors, std::string)
+
+
 namespace Data {
-namespace Books {
 
-struct Book
-{
-    std::string _id;
-    std::string title;
-    int pages;
-};
 
-void from_json(const nlohmann::json &j, Book &b)
-{
-    auto _id = j.at("_id");
-    b._id = _id.empty() ? std::string{} : _id.get<std::string>();
+// ------------------------------ Type Classes -----------------------------------------
 
-    auto title = j.at("title");
-    b.title = title.empty() ? std::string{} : title.get<std::string>();
 
-    auto pages = j.at("pages");
-    b.pages = pages.empty() ? int{} : pages.get<int>();
+#define Field(name, type) type name;
+#define ArrayField(name, type) std::vector<type> name;
+
+#define CLASS(namespaceName, className, Expansion) namespace namespaceName { \
+    struct className { \
+        Expansion \
+    }; \
 }
 
-//TODO: create these with a Macro
-extern Field<Book, std::string> title;
-inline Field<Book, std::string> title = Field<Book, std::string> { "title" };
+CLASS(Books, Book, BookList)
 
-extern Field<Book, std::string> smallImage;
-inline Field<Book, std::string> smallImage = Field<Book, std::string>{ "smallImage" };
+#undef Field
+#undef ArrayField
 
-extern Field<Book, int> pages;
-inline Field<Book, int> pages = Field<Book, int>{ "pages" };
 
-extern Field<Book, int> edition;
-inline Field<Book, int> edition = Field<Book, int>{ "edition" };
+// ------------------------------ Type Serializations ----------------------------------
 
-extern Field<Book, double> weight;
-inline Field<Book, double> weight = Field<Book, double>{ "weight" };
 
-extern ArrayField<Book, std::string> authors;
-inline ArrayField<Book, std::string> authors = ArrayField<Book, std::string>{ "authors" };
+#define Field(name, type) obj.name = j.contains(#name) ? j.at(#name).get<type>() : type{};
+#define ArrayField(name, type) obj.name = j.contains(#name) ? j.at(#name).get<std::vector<type>>() : std::initializer_list<type>{};
 
+#define SERIALIZE(namespaceName, className, Expansion) namespace namespaceName { \
+    void from_json(const nlohmann::json &j, className &obj) { \
+        Expansion \
+    } \
 }
+
+SERIALIZE(Books, Book, BookList)
+
+#undef Field
+#undef ArrayField
+
+    
+// ------------------------------- Type Filters -------------------------------------------
+
+
+#define Field(name, type) extern ScopedField<type> name; \
+    inline ScopedField<type> name = ScopedField<type> { #name };
+
+#define ArrayField(name, type) extern ScopedArrayField<type> name; \
+    inline ScopedArrayField<type> name = ScopedArrayField<type> { #name };
+
+#define FILTERS(namespaceName, className, Expansion) namespace namespaceName { \
+    template <typename T> \
+    using ScopedField = Field<className, T>; \
+    template <typename T> \
+    using ScopedArrayField = ArrayField<className, T>; \
+    Expansion \
+}
+
+FILTERS(Books, Book, BookList)
+
+#undef Field
+#undef ArrayField
+
 }
