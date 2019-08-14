@@ -5,6 +5,7 @@
 #include <json.hpp>
 
 #define BookList \
+    Field(_id, std::string) \
     Field(title, std::string) \
     Field(smallImage, std::string) \
     Field(mediumImage, std::string) \
@@ -17,16 +18,19 @@ namespace Data {
 
 // ------------------------------ All Types' Classes -----------------------------------------
 
+#define Field(name, type) type name;
+#define ArrayField(name, type) std::vector<type> name;
 
-namespace Books {
-    struct Book
-    {
-        std::string _id;
-        std::string title;
-        int pages;
-        std::vector<std::string> authors;
-    };
+#define CLASS(namespaceName, className, Expansion) namespace namespaceName { \
+    struct className { \
+        Expansion \
+    }; \
 }
+
+CLASS(Books, Book, BookList)
+
+#undef Field
+#undef ArrayField
 
 
 //#define Field(name) FilterDeclaration(name, double);
@@ -58,23 +62,25 @@ void from_json(const nlohmann::json &j, Book &b)
 // ------------------------------ End Types' Serializations -------------------------------------
     
 // ------------------------------- All Types' Filters -------------------------------------------
-    
-#define FilterDeclaration(name, type) extern Field<CURRENT_TYPE, type> name; \
-    inline Field<CURRENT_TYPE, type> name = Field<CURRENT_TYPE, type> { "name" };
-#define ArrayFilterDeclaration(name, type) extern ArrayField<CURRENT_TYPE, type> name; \
-    inline ArrayField<CURRENT_TYPE, type> name = ArrayField<CURRENT_TYPE, type> { "name" };
 
-#define Field(name, type) FilterDeclaration(name, type);
-#define ArrayField(name, type) ArrayFilterDeclaration(name, type);
 
-#define FILTERS(namespaceName, Expansion) namespace namespaceName { \
+
+#define Field(name, type) extern ScopedField<type> name; \
+    inline ScopedField<type> name = ScopedField<type> { #name };
+
+#define ArrayField(name, type) extern ScopedArrayField<type> name; \
+    inline ScopedArrayField<type> name = ScopedArrayField<type> { #name };
+
+#define FILTERS(namespaceName, className, Expansion) namespace namespaceName { \
+    template <typename T> \
+    using ScopedField = Field<className, T>; \
+    template <typename T> \
+    using ScopedArrayField = ArrayField<className, T>; \
     Expansion \
 }
 
+// ---------------------------- for each type ---------------------------------
 
-// -----------------------------------------------------------------------
-
-#define CURRENT_TYPE Book
-FILTERS(Books, BookList)
+FILTERS(Books, Book, BookList)
 
 }
