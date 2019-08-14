@@ -76,4 +76,15 @@ FILTERS(Books, Book, BookList)
 #undef Field
 #undef ArrayField
 
+
+//TDOD: properly redefine
+namespace Subjects {
+
+class Subjects{};
+
+extern Field<Subjects, std::string> name;
+inline Field<Subjects, std::string> name = Field<Subjects, std::string> { "name" };
+
+}
+
 }

@@ -96,7 +96,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     auto q = makeFilter(
 //        (weight < 10 || pages < 500) && (pages < 100 || weight < 90),
+
         title == "Hello World",
+
+        //Data::Subjects::name == "junk",
+
         weight < 50 || weight < 100 || weight < 100,
         weight < 50 || weight < 100 || weight < 110 || weight < 120,
         weight < 10 || (weight < 50 || weight < 100),
