@@ -14,9 +14,12 @@
     Field(weight, double) \
     ArrayField(authors, std::string)
 
+
 namespace Data {
 
+
 // ------------------------------ Type Classes -----------------------------------------
+
 
 #define Field(name, type) type name;
 #define ArrayField(name, type) std::vector<type> name;
@@ -34,6 +37,7 @@ CLASS(Books, Book, BookList)
 
 
 // ------------------------------ Type Serializations ----------------------------------
+
 
 #define Field(name, type) obj.name = j.contains(#name) ? j.at(#name).get<type>() : type{};
 #define ArrayField(name, type) obj.name = j.contains(#name) ? j.at(#name).get<std::vector<type>>() : std::initializer_list<type>{};
@@ -67,10 +71,7 @@ SERIALIZE(Books, Book, BookList)
     Expansion \
 }
 
-
-
 FILTERS(Books, Book, BookList)
-
 
 #undef Field
 #undef ArrayField
