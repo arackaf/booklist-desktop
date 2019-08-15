@@ -16,58 +16,6 @@ std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &l
     return lhs;
 }
 
-
-//template <typename Of>
-//std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<AndFilter<Of>> &lhs, const std::shared_ptr<AndFilter<Of>> &rhs)
-//{
-//    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
-//}
-
-//template <typename Of, typename T>
-//std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<AndFilter<Of>> &rhs)
-//{
-//    return rhs || lhs;
-//}
-
-//template <typename Of, typename T>
-//std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<AndFilter<Of>> &lhs, const std::shared_ptr<ActualFilter<Of, T>> &rhs)
-//{
-//    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
-//}
-
-//template <typename Of, typename T, typename U>
-//std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<ActualFilter<Of, U>> &rhs)
-//{
-//    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
-//}
-
-//template <typename Of>
-//std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<OrFilter<Of>> &lhs, const std::shared_ptr<OrFilter<Of>> &rhs)
-//{
-//    return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
-//}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//Single template operator replaces the four commented out, below it :D
-
 template
 <
     typename FilterLHS,

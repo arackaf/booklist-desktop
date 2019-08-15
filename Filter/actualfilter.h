@@ -19,7 +19,7 @@ struct NumericField;
 template <typename Of, typename FieldType, typename FilterValueType = FieldType>
 struct ActualFilter: public Filter<Of>
 {
-    ActualFilter(Field<Of, FieldType> f, FilterValueType val, std::string op) : val(val), op(op), f(f) {}
+    ActualFilter(const Field<Of, FieldType> &f, const FilterValueType val, const std::string &op) : val(val), op(op), f(f) {}
     FilterValueType val;
     std::string op;
     Field<Of, FieldType> f;
@@ -37,7 +37,7 @@ std::string ActualFilter<Of, FieldType, FilterValueType>::serialize()
 }
 
 template<typename Of, typename FieldType, typename FilterValueType>
-std::string serializeActualFilter(const std::string &op, const Field<Of, FieldType> &f, const FilterValueType &val)
+std::string serializeActualFilter(const std::string &op, const Field<Of, FieldType> &f, const FilterValueType val)
 {
 
     auto res = opLookup.find(op);
