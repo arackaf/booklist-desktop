@@ -11,11 +11,71 @@ using json = nlohmann::json;
 #include "mongoquerybase.h"
 #include "booktable.h"
 
+#include <QAbstractListModel>
+#include <QStandardItemModel>
+#include <QStringList>
+#include <QVBoxLayout>
+#include <QStyledItemDelegate>
+
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
     ((std::string*)userp)->append((char*)contents, size * nmemb);
     return size * nmemb;
 }
+
+using Data::Books::Book;
+
+class ListModel : public QAbstractListModel
+{
+private:
+    std::vector<Book> books;
+public:
+    ListModel(QObject *parent) : QAbstractListModel(parent), books({ Book{}, Book{}, Book{} }) {}
+    int rowCount(const QModelIndex &) const override;
+
+    QVariant data(const QModelIndex &index, int = Qt::DisplayRole) const override;
+};
+
+int ListModel::rowCount(const QModelIndex &) const
+{
+    return 3;
+}
+
+QVariant ListModel::data(const QModelIndex &index, int role) const
+{
+    return QVariant{};
+    //return books[index.row()];
+    if (role == Qt::DisplayRole ) {
+        return QString{ "Hello " };
+    }
+    return QVariant{};
+}
+
+struct BookViewDelegate : public QStyledItemDelegate
+{
+     BookViewDelegate(int height, QObject* parent = 0) : QStyledItemDelegate(parent), height(height) {}
+
+     int height;
+
+     QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
+     {
+         return QSize(0, height); //enter your values here
+     }
+
+     inline void paintXXX(QPainter *painter, const QStyleOptionViewItem &option,
+                       const QModelIndex &index ) const
+     {
+         // Set up a QStyleOptionProgressBar to precisely mimic the
+         // environment of a progress bar.
+         QStyleOptionButton boptions;
+         boptions.text = "My Buttonnnnnnnnn";
+         boptions.rect = option.rect;
+
+
+         // Draw the progress bar onto the view.
+         QApplication::style()->drawControl(QStyle::CE_PushButton, &boptions, painter);
+     }
+};
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -162,7 +222,27 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     ui->textEdit->setPlainText(QString { (message + "\n\n" + q.serialize()).c_str() });
+
+    ListModel *model = new ListModel(nullptr);
+
+    ui->listView->setModel(model);
+
+
+    auto w = new QWidget();
+    auto v = new QVBoxLayout{};
+    v->addWidget(new QPushButton{"Heyooooo"});
+    v->addWidget(new QLabel{"Hi there"});
+    v->addWidget(new QPushButton{"Button 2"});
+
+    w->setLayout(v);
+
+
+    ui->listView->setIndexWidget(model->index(0), w);
+    ui->listView->setItemDelegate(new BookViewDelegate(v->sizeHint().height(), this));
 }
+
+
+
 
 MainWindow::~MainWindow()
 {

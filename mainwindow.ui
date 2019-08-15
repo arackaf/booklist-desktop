@@ -53,10 +53,20 @@
    <widget class="QPlainTextEdit" name="textEdit2">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>410</y>
-      <width>331</width>
-      <height>151</height>
+      <x>10</x>
+      <y>400</y>
+      <width>111</width>
+      <height>71</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QListView" name="listView">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>400</y>
+      <width>431</width>
+      <height>161</height>
      </rect>
     </property>
    </widget>
