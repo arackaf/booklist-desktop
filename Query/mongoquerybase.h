@@ -38,6 +38,12 @@ struct ExtractBaseFilterType{
 template <typename T>
 using ExtractBaseFilterType_t = typename ExtractBaseFilterType<T>::FilterType;
 
+template<typename Of>
+Query<Of> makeFilter()
+{
+    return Query<Of> {};
+}
+
 
 template<typename ...FilterArgs>
 decltype (auto) makeFilter(FilterArgs... filters)

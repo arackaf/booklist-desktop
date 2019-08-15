@@ -153,6 +153,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     using namespace Data::Books;
 
+    auto q0 = makeFilter<Book>();
 
     auto q = makeFilter(
 //        (weight < 10 || pages < 500) && (pages < 100 || weight < 90),
