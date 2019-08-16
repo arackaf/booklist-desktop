@@ -16,6 +16,8 @@ using json = nlohmann::json;
 #include <QStringList>
 #include <QVBoxLayout>
 #include <QStyledItemDelegate>
+#include <QPushButton>
+#include <QLabel>
 
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
