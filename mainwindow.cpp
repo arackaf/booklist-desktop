@@ -79,9 +79,9 @@ struct BookViewDelegate : public QStyledItemDelegate
 
     int height;
 
-    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
+    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &i) const
     {
-        return QSize(0, height); //enter your values here
+        return QSize(0,  i.row() == 0 ? 87 : 89 /*height*/); //enter your values here
     }
 };
 
@@ -114,26 +114,34 @@ QWidget* getListItemWidget(const std::string &url)
 
     gl->setMargin(0);
 
-    //gl->setColumnMinimumWidth(0, 70);
-    //gl->setColumnStretch(0, 0);
+    gl->setContentsMargins(10, 10, 0, 0);
+
+    gl->setColumnMinimumWidth(0, 65);
+    gl->setColumnStretch(0, 0);
 
     gl->setColumnMinimumWidth(1, 200);
     gl->setColumnStretch(1, 1);
 
     QLabel *l = new QLabel{""};
-    ImageLoader *il = new ImageLoader{url, l};
+    //ImageLoader *il = new ImageLoader{url, l};
+    QImage *imgL = new QImage;
+    imgL->load(QString { url.c_str() });
 
-    QWidget *lholder = new QWidget;
-    QHBoxLayout *lboxHolder = new QHBoxLayout;
-    lholder->setFixedHeight(85);
-    lholder->setFixedWidth(65);
+    l->setPixmap(QPixmap::fromImage(*imgL));
+    l->adjustSize();
+
+
+    //QWidget *lholder = new QWidget;
+    //QHBoxLayout *lboxHolder = new QHBoxLayout;
+    //lholder->setFixedHeight(85);
+    //lholder->setFixedWidth(65);
 
     //lholder->setMinimumHeight(95);
-    lholder->setLayout(lboxHolder);
-    lboxHolder->addWidget(l);
+    //lholder->setLayout(lboxHolder);
+    //lboxHolder->addWidget(l);
 
 
-    gl->addWidget(lholder, 0, 0, Qt::AlignTop);
+    gl->addWidget(l, 0, 0, Qt::AlignTop);
     gl->addWidget(new QPushButton{"Heyooooo"}, 0, 1, Qt::AlignTop);
 
     gl->setHorizontalSpacing(0);
@@ -143,8 +151,9 @@ QWidget* getListItemWidget(const std::string &url)
 
     qDebug() << gl->sizeHint().height();
     qDebug() << w->sizeHint().height();
+    qDebug() << l->margin() << " ";
 
-    lboxHolder->setContentsMargins(10, 5, 5, 5);
+    //lboxHolder->setContentsMargins(10, 5, 5, 5);
 
 
     return w;
@@ -301,11 +310,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->listView->setModel(model);
 
 
-    auto w = getListItemWidget("https://images-na.ssl-images-amazon.com/images/I/51QjQQuYcmL._SL75_.jpg");
+    //auto w = getListItemWidget("https://images-na.ssl-images-amazon.com/images/I/51QjQQuYcmL._SL75_.jpg");
+    auto w = getListItemWidget("/Users/adam.rackis/Desktop/covers/a.jpg");
     ui->listView->setIndexWidget(model->index(0), w);
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
 
-    auto w2 = getListItemWidget("https://images-na.ssl-images-amazon.com/images/I/51TEX384gcL._SL75_.jpg");
+    auto w2 = getListItemWidget("/Users/adam.rackis/Desktop/covers/b.jpg");
     ui->listView->setIndexWidget(model->index(1), w2);
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
     //ui->listView->setFixedSize(w->size());
