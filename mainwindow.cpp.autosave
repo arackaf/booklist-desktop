@@ -118,20 +118,10 @@ QWidget* getListItemWidget(const std::string &url)
     gl->setColumnMinimumWidth(1, 200);
     gl->setColumnStretch(1, 1);
 
-    //gl.setAlignment(Qt::Alignment::)
-
     gl->setSpacing(0);
 
     QLabel *l = new QLabel{""};
     ImageLoader *il = new ImageLoader{url, l};
-
-    //QWidget *lholder = new QWidget;
-    //QVBoxLayout *lboxHolder = new QVBoxLayout;
-    //lholder->setFixedWidth(100);
-    //lholder->setMinimumHeight(80);
-    //lholder->setLayout(lboxHolder);
-    //lboxHolder->addWidget(l);
-
 
     gl->addWidget(l, 0, 0);
     gl->addWidget(new QPushButton{"Heyooooo"}, 0, 1);
