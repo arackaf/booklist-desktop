@@ -19,6 +19,10 @@ using json = nlohmann::json;
 #include <QPushButton>
 #include <QLabel>
 
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
     ((std::string*)userp)->append((char*)contents, size * nmemb);
@@ -79,11 +83,33 @@ struct BookViewDelegate : public QStyledItemDelegate
      }
 };
 
+
+void MainWindow::fileDownloaded(QNetworkReply* pReply) {
+    QByteArray bts = pReply->readAll();
+    QImage* img = new QImage{};
+    img->loadFromData(bts);
+
+    this->ui->imageLabel->setPixmap(QPixmap::fromImage(*img));
+    this->ui->imageLabel->adjustSize();
+
+    pReply->deleteLater();
+}
+
+
+void MainWindow::getImage()
+{
+    QNetworkReply *reply = manager.get(QNetworkRequest(QUrl("https://images-na.ssl-images-amazon.com/images/I/51QjQQuYcmL._SL75_.jpg")));
+    connect(&manager, SIGNAL (finished(QNetworkReply*)), this, SLOT(fileDownloaded(QNetworkReply*)));
+}
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    this->getImage();
 
     std::string url = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
     std::string url2 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%2050)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
