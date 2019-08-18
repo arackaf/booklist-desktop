@@ -22,6 +22,7 @@ using json = nlohmann::json;
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QObject>
 
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
@@ -85,26 +86,28 @@ struct BookViewDelegate : public QStyledItemDelegate
 };
 
 
-void MainWindow::fileDownloaded(QNetworkReply* pReply) {
+
+
+void ImageLoader::fileDownloaded(QNetworkReply* pReply) {
     QByteArray bts = pReply->readAll();
     QImage* img = new QImage{};
     img->loadFromData(bts);
 
-    this->ui->imageLabel->setPixmap(QPixmap::fromImage(*img));
-    this->ui->imageLabel->adjustSize();
+    this->target->setPixmap(QPixmap::fromImage(*img));
+    this->target->adjustSize();
 
     pReply->deleteLater();
 }
 
 
-void MainWindow::getImage()
+void ImageLoader::loadImage()
 {
-    QNetworkReply *reply = manager.get(QNetworkRequest(QUrl("https://images-na.ssl-images-amazon.com/images/I/51QjQQuYcmL._SL75_.jpg")));
+    QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(url.c_str())));
     connect(&manager, SIGNAL (finished(QNetworkReply*)), this, SLOT(fileDownloaded(QNetworkReply*)));
 }
 
 
-QWidget* getListItemWidget(std::string url)
+QWidget* getListItemWidget(const std::string &url)
 {
     auto w = new QWidget();
     auto gl = new QGridLayout{};
@@ -115,8 +118,11 @@ QWidget* getListItemWidget(std::string url)
     gl->setColumnMinimumWidth(1, 200);
     gl->setColumnStretch(1, 1);
 
+    QLabel *l = new QLabel{""};
+    ImageLoader *il = new ImageLoader{url, l};
+
     gl->addWidget(new QPushButton{"Heyooooo"}, 0, 0);
-    gl->addWidget(new QLabel{"Hi there"}, 0, 1);
+    gl->addWidget(l, 0, 1);
 
     w->setLayout(gl);
     return w;
@@ -127,8 +133,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    this->getImage();
 
     std::string url = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
     std::string url2 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%2050)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
@@ -275,22 +279,20 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->listView->setModel(model);
 
 
-    auto w = getListItemWidget("");
+    auto w = getListItemWidget("https://images-na.ssl-images-amazon.com/images/I/51QjQQuYcmL._SL75_.jpg");
     ui->listView->setIndexWidget(model->index(0), w);
     ui->listView->setItemDelegate(new BookViewDelegate(100, this));
 
-    auto w2 = getListItemWidget("");
+    auto w2 = getListItemWidget("https://images-na.ssl-images-amazon.com/images/I/51TEX384gcL._SL75_.jpg");
     ui->listView->setIndexWidget(model->index(1), w2);
     ui->listView->setItemDelegate(new BookViewDelegate(100, this));
+
 
 
         //ui->listView->setItemDelegate(new BookViewDelegate(gl->sizeHint().height(), this));
 
     model->update();
 }
-
-
-
 
 
 
