@@ -35,21 +35,36 @@ class ListModel : public QAbstractListModel
 {
 private:
     std::vector<Book> books;
+    int count = 3;
 public:
     ListModel(QObject *parent) : QAbstractListModel(parent), books({ Book{}, Book{}, Book{} }) {}
     int rowCount(const QModelIndex &) const override;
 
     QVariant data(const QModelIndex &index, int = Qt::DisplayRole) const override;
+
+    void update();
 };
+
+void ListModel::update()
+{
+    count = 8;
+    emit dataChanged(QModelIndex(), QModelIndex());
+
+//    QModelIndex top = createIndex(0, 0);
+
+//    QModelIndex bottom = createIndex(2, 0);
+
+//    emit dataChanged(top, bottom);
+}
 
 int ListModel::rowCount(const QModelIndex &) const
 {
-    return 3;
+    return count;
 }
 
 QVariant ListModel::data(const QModelIndex &index, int role) const
 {
-    return QVariant{};
+    //return QVariant{};
     //return books[index.row()];
     if (role == Qt::DisplayRole ) {
         return QString{ "Hello " };
@@ -59,28 +74,14 @@ QVariant ListModel::data(const QModelIndex &index, int role) const
 
 struct BookViewDelegate : public QStyledItemDelegate
 {
-     BookViewDelegate(int height, QObject* parent = 0) : QStyledItemDelegate(parent), height(height) {}
+    BookViewDelegate(int height, QObject* parent = nullptr) : QStyledItemDelegate(parent), height(height) {}
 
-     int height;
+    int height;
 
-     QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
-     {
-         return QSize(0, height); //enter your values here
-     }
-
-     inline void paintXXX(QPainter *painter, const QStyleOptionViewItem &option,
-                       const QModelIndex &index ) const
-     {
-         // Set up a QStyleOptionProgressBar to precisely mimic the
-         // environment of a progress bar.
-         QStyleOptionButton boptions;
-         boptions.text = "My Buttonnnnnnnnn";
-         boptions.rect = option.rect;
-
-
-         // Draw the progress bar onto the view.
-         QApplication::style()->drawControl(QStyle::CE_PushButton, &boptions, painter);
-     }
+    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
+    {
+        return QSize(0, height); //enter your values here
+    }
 };
 
 
@@ -264,9 +265,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     w->setLayout(v);
 
-
     ui->listView->setIndexWidget(model->index(0), w);
     ui->listView->setItemDelegate(new BookViewDelegate(v->sizeHint().height(), this));
+
+    model->update();
 }
 
 
