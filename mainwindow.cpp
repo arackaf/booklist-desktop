@@ -64,7 +64,7 @@ int ListModel::rowCount(const QModelIndex &) const
 
 QVariant ListModel::data(const QModelIndex &index, int role) const
 {
-    //return QVariant{};
+    return QVariant{};
     //return books[index.row()];
     if (role == Qt::DisplayRole ) {
         return QString{ "Hello " };
@@ -103,6 +103,24 @@ void MainWindow::getImage()
     connect(&manager, SIGNAL (finished(QNetworkReply*)), this, SLOT(fileDownloaded(QNetworkReply*)));
 }
 
+
+QWidget* getListItemWidget(std::string url)
+{
+    auto w = new QWidget();
+    auto gl = new QGridLayout{};
+
+    gl->setColumnMinimumWidth(0, 50);
+    gl->setColumnStretch(0, 0);
+
+    gl->setColumnMinimumWidth(1, 200);
+    gl->setColumnStretch(1, 1);
+
+    gl->addWidget(new QPushButton{"Heyooooo"}, 0, 0);
+    gl->addWidget(new QLabel{"Hi there"}, 0, 1);
+
+    w->setLayout(gl);
+    return w;
+}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -257,19 +275,21 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->listView->setModel(model);
 
 
-    auto w = new QWidget();
-    auto v = new QVBoxLayout{};
-    v->addWidget(new QPushButton{"Heyooooo"});
-    v->addWidget(new QLabel{"Hi there"});
-    v->addWidget(new QPushButton{"Button 2"});
-
-    w->setLayout(v);
-
+    auto w = getListItemWidget("");
     ui->listView->setIndexWidget(model->index(0), w);
-    ui->listView->setItemDelegate(new BookViewDelegate(v->sizeHint().height(), this));
+    ui->listView->setItemDelegate(new BookViewDelegate(100, this));
+
+    auto w2 = getListItemWidget("");
+    ui->listView->setIndexWidget(model->index(1), w2);
+    ui->listView->setItemDelegate(new BookViewDelegate(100, this));
+
+
+        //ui->listView->setItemDelegate(new BookViewDelegate(gl->sizeHint().height(), this));
 
     model->update();
 }
+
+
 
 
 
