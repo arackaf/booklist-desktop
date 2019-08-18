@@ -112,31 +112,41 @@ QWidget* getListItemWidget(const std::string &url)
     auto w = new QWidget();
     auto gl = new QGridLayout{};
 
-    gl->setColumnMinimumWidth(0, 70);
-    gl->setColumnStretch(0, 0);
+    gl->setMargin(0);
+
+    //gl->setColumnMinimumWidth(0, 70);
+    //gl->setColumnStretch(0, 0);
 
     gl->setColumnMinimumWidth(1, 200);
     gl->setColumnStretch(1, 1);
 
-    //gl.setAlignment(Qt::Alignment::)
-
-    gl->setSpacing(0);
-
     QLabel *l = new QLabel{""};
     ImageLoader *il = new ImageLoader{url, l};
 
-    //QWidget *lholder = new QWidget;
-    //QVBoxLayout *lboxHolder = new QVBoxLayout;
-    //lholder->setFixedWidth(100);
-    //lholder->setMinimumHeight(80);
-    //lholder->setLayout(lboxHolder);
-    //lboxHolder->addWidget(l);
+    QWidget *lholder = new QWidget;
+    QHBoxLayout *lboxHolder = new QHBoxLayout;
+    lholder->setFixedHeight(85);
+    lholder->setFixedWidth(65);
+
+    //lholder->setMinimumHeight(95);
+    lholder->setLayout(lboxHolder);
+    lboxHolder->addWidget(l);
 
 
-    gl->addWidget(l, 0, 0);
+    gl->addWidget(lholder, 0, 0);
     gl->addWidget(new QPushButton{"Heyooooo"}, 0, 1);
 
+    gl->setHorizontalSpacing(0);
+    gl->setVerticalSpacing(0);
+
     w->setLayout(gl);
+
+    qDebug() << gl->sizeHint().height();
+    qDebug() << w->sizeHint().height();
+
+    lboxHolder->setContentsMargins(10, 5, 5, 5);
+
+
     return w;
 }
 
@@ -298,8 +308,19 @@ MainWindow::MainWindow(QWidget *parent) :
     auto w2 = getListItemWidget("https://images-na.ssl-images-amazon.com/images/I/51TEX384gcL._SL75_.jpg");
     ui->listView->setIndexWidget(model->index(1), w2);
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
+    //ui->listView->setFixedSize(w->size());
 
-    ui->listView->setItemDelegate(new BookViewDelegate(w->sizeHint().height(), this));
+    ui->listView->setItemDelegate(new BookViewDelegate(95, this));
+
+    ui->tableWidget->insertRow(0);
+    ui->tableWidget->insertRow(1);
+    ui->tableWidget->insertRow(2);
+
+    ui->tableWidget->insertColumn(0);
+    ui->tableWidget->insertColumn(1);
+    ui->tableWidget->insertColumn(2);
+    ui->tableWidget->insertColumn(3);
+
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
 
     model->update();
