@@ -133,8 +133,8 @@ QWidget* getListItemWidget(const std::string &url)
     lboxHolder->addWidget(l);
 
 
-    gl->addWidget(lholder, 0, 0);
-    gl->addWidget(new QPushButton{"Heyooooo"}, 0, 1);
+    gl->addWidget(lholder, 0, 0, Qt::AlignTop);
+    gl->addWidget(new QPushButton{"Heyooooo"}, 0, 1, Qt::AlignTop);
 
     gl->setHorizontalSpacing(0);
     gl->setVerticalSpacing(0);
