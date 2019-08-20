@@ -20,7 +20,7 @@ public:
     QWidget* getWidget(){ return this->w; }
 
 public slots:
-    void updateImage(QNetworkReply* pReply);
+    void updateImage(const std::string &);
 
 private:
     QWidget* w;
@@ -61,6 +61,9 @@ public:
 
 public slots:
     void fileDownloaded(QNetworkReply *pReply);
+
+signals:
+    void doneDownloading(const std::string &);
 
 private:
     QNetworkAccessManager manager;

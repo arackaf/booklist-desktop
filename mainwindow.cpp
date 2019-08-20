@@ -114,6 +114,7 @@ void ImageLoader::fileDownloaded(QNetworkReply* pReply) {
     pReply->deleteLater();
 
     this->updater();
+    emit this->doneDownloading(this->name);
 }
 
 
@@ -122,7 +123,7 @@ void ImageLoader::loadImage()
     QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(url.c_str())));
     connect(&manager, SIGNAL (finished(QNetworkReply*)), this, SLOT(fileDownloaded(QNetworkReply*)));
 
-    connect(&manager, SIGNAL (finished(QNetworkReply*)), lwi, SLOT(updateImage(QNetworkReply*)));
+    connect(this, SIGNAL (doneDownloading(const std::string &)), lwi, SLOT(updateImage(const std::string &)));
 }
 
 
@@ -217,10 +218,10 @@ void ListWidgetItem::init()
     //return w;
 }
 
-void ListWidgetItem::updateImage(QNetworkReply* pReply)
+void ListWidgetItem::updateImage(const std::string &newImgPath)
 {
     QImage *newImg = new QImage;
-    newImg->load(QString { newFile.c_str() });
+    newImg->load(QString { newImgPath.c_str() });
 
     //QLabel *newLabel = new QLabel{""};
     l->setPixmap(QPixmap::fromImage(*newImg));
