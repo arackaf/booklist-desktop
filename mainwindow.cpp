@@ -23,6 +23,7 @@ using json = nlohmann::json;
 #include <QNetworkRequest>
 #include <QNetworkReply>
 #include <QObject>
+#include <fstream>
 
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
@@ -90,11 +91,16 @@ struct BookViewDelegate : public QStyledItemDelegate
 
 void ImageLoader::fileDownloaded(QNetworkReply* pReply) {
     QByteArray bts = pReply->readAll();
-    QImage* img = new QImage{};
-    img->loadFromData(bts);
 
-    this->target->setPixmap(QPixmap::fromImage(*img));
-    this->target->adjustSize();
+    std::ofstream file(this->name, std::ios::binary);
+    file.write(bts.data(), bts.size());
+    file.close();
+
+    //QImage* img = new QImage{};
+    //img->loadFromData(bts);
+
+    //this->target->setPixmap(QPixmap::fromImage(*img));
+    //this->target->adjustSize();
 
     pReply->deleteLater();
 }
@@ -107,7 +113,7 @@ void ImageLoader::loadImage()
 }
 
 
-QWidget* getListItemWidget(const std::string &url)
+QWidget* getListItemWidget(const std::string &url, const std::string &remote, const std::string name)
 {
     auto w = new QWidget();
     auto gl = new QGridLayout{};
@@ -123,7 +129,7 @@ QWidget* getListItemWidget(const std::string &url)
     gl->setColumnStretch(1, 1);
 
     QLabel *l = new QLabel{""};
-    //ImageLoader *il = new ImageLoader{url, l};
+    ImageLoader *il = new ImageLoader{remote, l, name};
     QImage *imgL = new QImage;
     imgL->load(QString { url.c_str() });
 
@@ -311,11 +317,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     //auto w = getListItemWidget("https://images-na.ssl-images-amazon.com/images/I/51QjQQuYcmL._SL75_.jpg");
-    auto w = getListItemWidget("/Users/adam.rackis/Desktop/covers/a.jpg");
+    auto w = getListItemWidget("/Users/adam.rackis/Desktop/covers/a.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-9c0e31fd-cf54-41b0-bc4b-2cc0f0badfeb.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_A.jpg");
     ui->listView->setIndexWidget(model->index(0), w);
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
 
-    auto w2 = getListItemWidget("/Users/adam.rackis/Desktop/covers/b.jpg");
+    auto w2 = getListItemWidget("/Users/adam.rackis/Desktop/covers/b.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-59af95b4-32b0-41f7-8b7e-1bc02ae221b2.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_B.jpg");
     ui->listView->setIndexWidget(model->index(1), w2);
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
     //ui->listView->setFixedSize(w->size());

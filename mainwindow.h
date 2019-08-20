@@ -27,7 +27,7 @@ class ImageLoader : public QObject {
 
 public:
 
-    ImageLoader(const std::string &url, QLabel *target) : target(target), url(url) {
+    ImageLoader(const std::string &url, QLabel *target, const std::string &name) : target(target), name(name), url(url) {
         this->loadImage();
     }
 
@@ -39,6 +39,7 @@ public slots:
 private:
     QNetworkAccessManager manager;
     QLabel *target;
+    std::string name;
     std::string url;
 };
 
