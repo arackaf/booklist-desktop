@@ -4,6 +4,25 @@
 #include <QMainWindow>
 #include <QNetworkReply>
 #include <QLabel>
+#include <QAbstractListModel>
+
+#include "booktable.h"
+
+
+using Data::Books::Book;
+
+class ListModel : public QAbstractListModel
+{
+private:
+    std::vector<Book> books;
+    int count = 3;
+public:
+    void modelDataChanged(const QModelIndex &, const QModelIndex &);
+    ListModel(QObject *parent) : QAbstractListModel(parent), books({ Book{}, Book{}, Book{} }) {}
+    int rowCount(const QModelIndex &) const override;
+
+    QVariant data(const QModelIndex &index, int = Qt::DisplayRole) const override;
+};
 
 class ListWidgetItem : public QObject
 {

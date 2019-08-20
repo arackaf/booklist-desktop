@@ -33,18 +33,6 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
 
 using Data::Books::Book;
 
-class ListModel : public QAbstractListModel
-{
-private:
-    std::vector<Book> books;
-    int count = 3;
-public:
-    void modelDataChanged(const QModelIndex &, const QModelIndex &);
-    ListModel(QObject *parent) : QAbstractListModel(parent), books({ Book{}, Book{}, Book{} }) {}
-    int rowCount(const QModelIndex &) const override;
-
-    QVariant data(const QModelIndex &index, int = Qt::DisplayRole) const override;
-};
 
 void ListModel::modelDataChanged(const QModelIndex &start = QModelIndex{}, const QModelIndex &end = QModelIndex{})
 {
