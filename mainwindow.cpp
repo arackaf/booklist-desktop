@@ -39,25 +39,34 @@ private:
     std::vector<Book> books;
     int count = 3;
 public:
+    void modelDataChanged(const QModelIndex &, const QModelIndex &);
     ListModel(QObject *parent) : QAbstractListModel(parent), books({ Book{}, Book{}, Book{} }) {}
     int rowCount(const QModelIndex &) const override;
 
     QVariant data(const QModelIndex &index, int = Qt::DisplayRole) const override;
-
-    void update();
 };
 
-void ListModel::update()
+void ListModel::modelDataChanged(const QModelIndex &start = QModelIndex{}, const QModelIndex &end = QModelIndex{})
 {
-    count = 8;
+    //emit dataChanged(start, end);
+
     emit dataChanged(QModelIndex(), QModelIndex());
+    QModelIndex top = createIndex(0, 0);
+    QModelIndex bottom = createIndex(2, 0);
+    emit dataChanged(top, bottom);
+}
+
+//void ListModel::update(QModelIndex, QModelIndex)
+//{
+//    count = 8;
+//    emit dataChanged(QModelIndex(), QModelIndex());
 
 //    QModelIndex top = createIndex(0, 0);
 
 //    QModelIndex bottom = createIndex(2, 0);
 
 //    emit dataChanged(top, bottom);
-}
+//}
 
 int ListModel::rowCount(const QModelIndex &) const
 {
@@ -69,7 +78,7 @@ QVariant ListModel::data(const QModelIndex &index, int role) const
     return QVariant{};
     //return books[index.row()];
     if (role == Qt::DisplayRole ) {
-        return QString{ "Hello " };
+        return QString{ (std::string{"Hello "} + std::to_string( index.row())).c_str() };
     }
     return QVariant{};
 }
@@ -92,9 +101,9 @@ struct BookViewDelegate : public QStyledItemDelegate
 void ImageLoader::fileDownloaded(QNetworkReply* pReply) {
     QByteArray bts = pReply->readAll();
 
-    std::ofstream file(this->name, std::ios::binary);
-    file.write(bts.data(), bts.size());
-    file.close();
+    //std::ofstream file(this->name, std::ios::binary);
+    //file.write(bts.data(), bts.size());
+    //file.close();
 
     //QImage* img = new QImage{};
     //img->loadFromData(bts);
@@ -103,6 +112,8 @@ void ImageLoader::fileDownloaded(QNetworkReply* pReply) {
     //this->target->adjustSize();
 
     pReply->deleteLater();
+
+    this->updater();
 }
 
 
@@ -113,7 +124,7 @@ void ImageLoader::loadImage()
 }
 
 
-QWidget* getListItemWidget(const std::string &url, const std::string &remote, const std::string name)
+QWidget* getListItemWidget(const std::string &url, const std::string &remote, const std::string &newFile, const std::function<void(QModelIndex, QModelIndex)> &update, ListModel *model)
 {
     auto w = new QWidget();
     auto gl = new QGridLayout{};
@@ -129,12 +140,46 @@ QWidget* getListItemWidget(const std::string &url, const std::string &remote, co
     gl->setColumnStretch(1, 1);
 
     QLabel *l = new QLabel{""};
-    ImageLoader *il = new ImageLoader{remote, l, name};
     QImage *imgL = new QImage;
     imgL->load(QString { url.c_str() });
+    //l->setPixmap(QPixmap::fromImage(*imgL));
+    l->setText("ORIGINAL ORIGINAL ORIGINAL");
+    //l->adjustSize();
 
-    l->setPixmap(QPixmap::fromImage(*imgL));
-    l->adjustSize();
+
+    const std::function<void()> refresh = [&update, imgL, l, &newFile, model, w, gl](){
+        //imgL->load(QString { newFile.c_str() });
+
+        QImage *newImg = new QImage;
+        newImg->load(QString { newFile.c_str() });
+
+        QLabel *newLabel = new QLabel{""};
+        newLabel->setPixmap(QPixmap::fromImage(*newImg));
+        //newLabel->setText("UPDATED");
+
+
+        gl->replaceWidget(l, newLabel);
+        delete l;
+
+        //l->setText("UPDATED");
+        //l->clear();
+        //l->setPixmap(QPixmap::fromImage(*imgL));
+        //l->adjustSize();
+        //l->repaint();
+        //l->update();
+        w->repaint();
+        w->update();
+        //l->adjustSize();
+        model->modelDataChanged(QModelIndex(), QModelIndex{});
+        //update(QModelIndex(), QModelIndex());
+    };
+
+//    imgL->load(QString { newFile.c_str() });
+//    l->setPixmap(QPixmap::fromImage(*imgL));
+//    l->adjustSize();
+
+    //refresh();
+
 
 
     //QWidget *lholder = new QWidget;
@@ -154,6 +199,9 @@ QWidget* getListItemWidget(const std::string &url, const std::string &remote, co
     gl->setVerticalSpacing(0);
 
     w->setLayout(gl);
+
+    ImageLoader *il = new ImageLoader{remote, newFile, refresh};
+
 
     qDebug() << gl->sizeHint().height();
     qDebug() << w->sizeHint().height();
@@ -315,13 +363,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->listView->setModel(model);
 
-
     //auto w = getListItemWidget("https://images-na.ssl-images-amazon.com/images/I/51QjQQuYcmL._SL75_.jpg");
-    auto w = getListItemWidget("/Users/adam.rackis/Desktop/covers/a.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-9c0e31fd-cf54-41b0-bc4b-2cc0f0badfeb.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_A.jpg");
+    std::function<void(QModelIndex, QModelIndex)> updater = [model](QModelIndex l, QModelIndex r) { model->modelDataChanged(l, r); };
+
+    auto w = getListItemWidget("/Users/adam.rackis/Desktop/covers/a.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-9c0e31fd-cf54-41b0-bc4b-2cc0f0badfeb.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_A.jpg", updater, model);
     ui->listView->setIndexWidget(model->index(0), w);
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
 
-    auto w2 = getListItemWidget("/Users/adam.rackis/Desktop/covers/b.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-59af95b4-32b0-41f7-8b7e-1bc02ae221b2.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_B.jpg");
+    auto w2 = getListItemWidget("/Users/adam.rackis/Desktop/covers/b.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-59af95b4-32b0-41f7-8b7e-1bc02ae221b2.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_B.jpg", updater, model);
     ui->listView->setIndexWidget(model->index(1), w2);
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
     //ui->listView->setFixedSize(w->size());
@@ -339,7 +388,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
 
-    model->update();
+    //model->update();
 }
 
 

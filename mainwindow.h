@@ -27,7 +27,7 @@ class ImageLoader : public QObject {
 
 public:
 
-    ImageLoader(const std::string &url, QLabel *target, const std::string &name) : target(target), name(name), url(url) {
+    ImageLoader(const std::string &url, const std::string &name, const std::function<void()> &updater) : name(name), url(url), updater(updater) {
         this->loadImage();
     }
 
@@ -38,9 +38,9 @@ public slots:
 
 private:
     QNetworkAccessManager manager;
-    QLabel *target;
     std::string name;
     std::string url;
+    std::function<void()> updater;
 };
 
 #endif // MAINWINDOW_H
