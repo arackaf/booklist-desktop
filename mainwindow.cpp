@@ -124,9 +124,9 @@ void ImageLoader::loadImage()
 }
 
 
-QWidget* getListItemWidget(const std::string &url, const std::string &remote, const std::string &newFile, const std::function<void(QModelIndex, QModelIndex)> &update, ListModel *model)
+void ListWidgetItem::init()
 {
-    auto w = new QWidget();
+    w = new QWidget();
     auto gl = new QGridLayout{};
 
     gl->setMargin(0);
@@ -139,27 +139,29 @@ QWidget* getListItemWidget(const std::string &url, const std::string &remote, co
     gl->setColumnMinimumWidth(1, 200);
     gl->setColumnStretch(1, 1);
 
-    QLabel *l = new QLabel{""};
-    QImage *imgL = new QImage;
+    l = new QLabel{""};
+    imgL = new QImage;
     imgL->load(QString { url.c_str() });
-    //l->setPixmap(QPixmap::fromImage(*imgL));
-    l->setText("ORIGINAL ORIGINAL ORIGINAL");
-    //l->adjustSize();
+    l->setPixmap(QPixmap::fromImage(*imgL));
+    l->adjustSize();
+    //l->setText("ORIGINAL ORIGINAL ORIGINAL");
 
 
-    const std::function<void()> refresh = [&update, imgL, l, &newFile, model, w, gl](){
+
+    const std::function<void()> refresh = [](){};
+    //const std::function<void()> __refresh = [&update, imgL, l, &newFile, model, w, gl](){
         //imgL->load(QString { newFile.c_str() });
 
-        QImage *newImg = new QImage;
-        newImg->load(QString { newFile.c_str() });
+        //QImage *newImg = new QImage;
+        //newImg->load(QString { newFile.c_str() });
 
-        QLabel *newLabel = new QLabel{""};
-        newLabel->setPixmap(QPixmap::fromImage(*newImg));
+        //QLabel *newLabel = new QLabel{""};
+        //newLabel->setPixmap(QPixmap::fromImage(*newImg));
         //newLabel->setText("UPDATED");
 
 
-        gl->replaceWidget(l, newLabel);
-        delete l;
+        //gl->replaceWidget(l, newLabel);
+        //delete l;
 
         //l->setText("UPDATED");
         //l->clear();
@@ -167,12 +169,12 @@ QWidget* getListItemWidget(const std::string &url, const std::string &remote, co
         //l->adjustSize();
         //l->repaint();
         //l->update();
-        w->repaint();
-        w->update();
+        //w->repaint();
+        //w->update();
         //l->adjustSize();
-        model->modelDataChanged(QModelIndex(), QModelIndex{});
+        //model->modelDataChanged(QModelIndex(), QModelIndex{});
         //update(QModelIndex(), QModelIndex());
-    };
+    //};
 
 //    imgL->load(QString { newFile.c_str() });
 //    l->setPixmap(QPixmap::fromImage(*imgL));
@@ -210,7 +212,7 @@ QWidget* getListItemWidget(const std::string &url, const std::string &remote, co
     //lboxHolder->setContentsMargins(10, 5, 5, 5);
 
 
-    return w;
+    //return w;
 }
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -366,12 +368,13 @@ MainWindow::MainWindow(QWidget *parent) :
     //auto w = getListItemWidget("https://images-na.ssl-images-amazon.com/images/I/51QjQQuYcmL._SL75_.jpg");
     std::function<void(QModelIndex, QModelIndex)> updater = [model](QModelIndex l, QModelIndex r) { model->modelDataChanged(l, r); };
 
-    auto w = getListItemWidget("/Users/adam.rackis/Desktop/covers/a.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-9c0e31fd-cf54-41b0-bc4b-2cc0f0badfeb.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_A.jpg", updater, model);
-    ui->listView->setIndexWidget(model->index(0), w);
+    //auto w = getListItemWidget("/Users/adam.rackis/Desktop/covers/a.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-9c0e31fd-cf54-41b0-bc4b-2cc0f0badfeb.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_A.jpg", updater, model);
+    auto w = new ListWidgetItem{ "/Users/adam.rackis/Desktop/covers/a.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-9c0e31fd-cf54-41b0-bc4b-2cc0f0badfeb.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_A.jpg" };
+    ui->listView->setIndexWidget(model->index(0), w->getWidget());
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
 
-    auto w2 = getListItemWidget("/Users/adam.rackis/Desktop/covers/b.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-59af95b4-32b0-41f7-8b7e-1bc02ae221b2.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_B.jpg", updater, model);
-    ui->listView->setIndexWidget(model->index(1), w2);
+    auto w2 = new ListWidgetItem{ "/Users/adam.rackis/Desktop/covers/b.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-59af95b4-32b0-41f7-8b7e-1bc02ae221b2.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_B.jpg" };
+    ui->listView->setIndexWidget(model->index(1), w2->getWidget());
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
     //ui->listView->setFixedSize(w->size());
 

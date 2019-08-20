@@ -5,6 +5,28 @@
 #include <QNetworkReply>
 #include <QLabel>
 
+class ListWidgetItem : public QObject
+{
+    Q_OBJECT
+
+public:
+    ListWidgetItem(const std::string &url, const std::string &remote, const std::string &newFile) : url(url), remote(remote), newFile(newFile)
+    {
+        this->init();
+    }
+
+    void init();
+
+    QWidget* getWidget(){ return this->w; }
+private:
+    QWidget* w;
+    QLabel *l;
+    QImage *imgL;
+    std::string url;
+    std::string remote;
+    std::string newFile;
+};
+
 namespace Ui {
 class MainWindow;
 }
