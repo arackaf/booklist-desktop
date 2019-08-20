@@ -18,6 +18,10 @@ public:
     void init();
 
     QWidget* getWidget(){ return this->w; }
+
+public slots:
+    void updateImage(QNetworkReply* pReply);
+
 private:
     QWidget* w;
     QLabel *l;
@@ -49,7 +53,7 @@ class ImageLoader : public QObject {
 
 public:
 
-    ImageLoader(const std::string &url, const std::string &name, const std::function<void()> &updater) : name(name), url(url), updater(updater) {
+    ImageLoader(const std::string &url, const std::string &name, const std::function<void()> &updater, ListWidgetItem *lwi) : name(name), url(url), updater(updater), lwi(lwi) {
         this->loadImage();
     }
 
@@ -63,6 +67,7 @@ private:
     std::string name;
     std::string url;
     std::function<void()> updater;
+    ListWidgetItem *lwi;
 };
 
 #endif // MAINWINDOW_H

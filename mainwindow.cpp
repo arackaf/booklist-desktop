@@ -121,6 +121,8 @@ void ImageLoader::loadImage()
 {
     QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(url.c_str())));
     connect(&manager, SIGNAL (finished(QNetworkReply*)), this, SLOT(fileDownloaded(QNetworkReply*)));
+
+    connect(&manager, SIGNAL (finished(QNetworkReply*)), lwi, SLOT(updateImage(QNetworkReply*)));
 }
 
 
@@ -202,7 +204,7 @@ void ListWidgetItem::init()
 
     w->setLayout(gl);
 
-    ImageLoader *il = new ImageLoader{remote, newFile, refresh};
+    ImageLoader *il = new ImageLoader{remote, newFile, refresh, this};
 
 
     qDebug() << gl->sizeHint().height();
@@ -213,6 +215,32 @@ void ListWidgetItem::init()
 
 
     //return w;
+}
+
+void ListWidgetItem::updateImage(QNetworkReply* pReply)
+{
+    QImage *newImg = new QImage;
+    newImg->load(QString { newFile.c_str() });
+
+    //QLabel *newLabel = new QLabel{""};
+    l->setPixmap(QPixmap::fromImage(*newImg));
+    l->adjustSize();
+    //newLabel->setText("UPDATED");
+
+
+    //gl->replaceWidget(l, newLabel);
+    //delete l;
+
+    //l->setText("UPDATED");
+    //l->clear();
+    //l->setPixmap(QPixmap::fromImage(*imgL));
+    //l->adjustSize();
+    //l->repaint();
+    //l->update();
+    //w->repaint();
+    //w->update();
+    //l->adjustSize();
+
 }
 
 MainWindow::MainWindow(QWidget *parent) :
