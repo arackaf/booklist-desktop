@@ -77,9 +77,9 @@ struct BookViewDelegate : public QStyledItemDelegate
 
     int height;
 
-    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &i) const
+    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
     {
-        return QSize(0,  i.row() == 0 ? 87 : 89 /*height*/); //enter your values here
+        return QSize(0,  height); //enter your values here
     }
 };
 
@@ -88,16 +88,10 @@ struct BookViewDelegate : public QStyledItemDelegate
 
 void ImageLoader::fileDownloaded(QNetworkReply* pReply) {
     QByteArray bts = pReply->readAll();
+    std::ofstream file(this->name, std::ios::binary);
+    file.write(bts.data(), bts.size());
+    file.close();
 
-    //std::ofstream file(this->name, std::ios::binary);
-    //file.write(bts.data(), bts.size());
-    //file.close();
-
-    //QImage* img = new QImage{};
-    //img->loadFromData(bts);
-
-    //this->target->setPixmap(QPixmap::fromImage(*img));
-    //this->target->adjustSize();
 
     pReply->deleteLater();
 
@@ -135,55 +129,8 @@ void ListWidgetItem::init()
     imgL->load(QString { url.c_str() });
     l->setPixmap(QPixmap::fromImage(*imgL));
     l->adjustSize();
-    //l->setText("ORIGINAL ORIGINAL ORIGINAL");
-
-
 
     const std::function<void()> refresh = [](){};
-    //const std::function<void()> __refresh = [&update, imgL, l, &newFile, model, w, gl](){
-        //imgL->load(QString { newFile.c_str() });
-
-        //QImage *newImg = new QImage;
-        //newImg->load(QString { newFile.c_str() });
-
-        //QLabel *newLabel = new QLabel{""};
-        //newLabel->setPixmap(QPixmap::fromImage(*newImg));
-        //newLabel->setText("UPDATED");
-
-
-        //gl->replaceWidget(l, newLabel);
-        //delete l;
-
-        //l->setText("UPDATED");
-        //l->clear();
-        //l->setPixmap(QPixmap::fromImage(*imgL));
-        //l->adjustSize();
-        //l->repaint();
-        //l->update();
-        //w->repaint();
-        //w->update();
-        //l->adjustSize();
-        //model->modelDataChanged(QModelIndex(), QModelIndex{});
-        //update(QModelIndex(), QModelIndex());
-    //};
-
-//    imgL->load(QString { newFile.c_str() });
-//    l->setPixmap(QPixmap::fromImage(*imgL));
-//    l->adjustSize();
-
-    //refresh();
-
-
-
-    //QWidget *lholder = new QWidget;
-    //QHBoxLayout *lboxHolder = new QHBoxLayout;
-    //lholder->setFixedHeight(85);
-    //lholder->setFixedWidth(65);
-
-    //lholder->setMinimumHeight(95);
-    //lholder->setLayout(lboxHolder);
-    //lboxHolder->addWidget(l);
-
 
     gl->addWidget(l, 0, 0, Qt::AlignTop);
     gl->addWidget(new QPushButton{"Heyooooo"}, 0, 1, Qt::AlignTop);
@@ -195,15 +142,8 @@ void ListWidgetItem::init()
 
     ImageLoader *il = new ImageLoader{remote, newFile, refresh, this};
 
-
-    qDebug() << gl->sizeHint().height();
     qDebug() << w->sizeHint().height();
-    qDebug() << l->margin() << " ";
 
-    //lboxHolder->setContentsMargins(10, 5, 5, 5);
-
-
-    //return w;
 }
 
 void ListWidgetItem::updateImage(const std::string &newImgPath)
@@ -211,25 +151,11 @@ void ListWidgetItem::updateImage(const std::string &newImgPath)
     QImage *newImg = new QImage;
     newImg->load(QString { newImgPath.c_str() });
 
-    //QLabel *newLabel = new QLabel{""};
     l->setPixmap(QPixmap::fromImage(*newImg));
     l->adjustSize();
-    //newLabel->setText("UPDATED");
 
-
-    //gl->replaceWidget(l, newLabel);
-    //delete l;
-
-    //l->setText("UPDATED");
-    //l->clear();
-    //l->setPixmap(QPixmap::fromImage(*imgL));
-    //l->adjustSize();
-    //l->repaint();
-    //l->update();
-    //w->repaint();
-    //w->update();
-    //l->adjustSize();
-
+    qDebug() << "UPDATED";
+    qDebug() << w->sizeHint().height();
 }
 
 MainWindow::MainWindow(QWidget *parent) :
