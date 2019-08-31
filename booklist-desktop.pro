@@ -27,12 +27,16 @@ CONFIG += c++17
 LIBS += /usr/local/curl/lib/libcurl.dylib -lcurl
 
 SOURCES += \
+    DataDisplay/booklistwidgetitem.cpp \
         Filter/filterutils.cpp \
         Query/query.cpp \
         main.cpp \
         mainwindow.cpp \
 
 HEADERS += \
+        DataDisplay/booklistwidgetitem.h \
+        DataDisplay/listmodel.h \
+        DataDisplay/listwidgetitembase.h \
         Field/field.h \
         Filter/actualfilter.h \
         Filter/filter.h \
@@ -46,6 +50,7 @@ HEADERS += \
         booktable.h \
         field.h \
         filterutils.h \
+        listmodel.h \
         mainwindow.h \
         mongoquerybase.h \
         query.h
@@ -59,6 +64,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 
+INCLUDEPATH += DataDisplay
 INCLUDEPATH += Field
 INCLUDEPATH += Filter
 INCLUDEPATH += MongoTypes

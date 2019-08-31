@@ -10,6 +10,7 @@ using json = nlohmann::json;
 #include "query.h"
 #include "mongoquerybase.h"
 #include "booktable.h"
+#include "listmodel.h"
 
 #include <QAbstractListModel>
 #include <QStandardItemModel>
@@ -34,42 +35,7 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
 using Data::Books::Book;
 
 
-void ListModel::modelDataChanged(const QModelIndex &start = QModelIndex{}, const QModelIndex &end = QModelIndex{})
-{
-    //emit dataChanged(start, end);
 
-    emit dataChanged(QModelIndex(), QModelIndex());
-    QModelIndex top = createIndex(0, 0);
-    QModelIndex bottom = createIndex(2, 0);
-    emit dataChanged(top, bottom);
-}
-
-//void ListModel::update(QModelIndex, QModelIndex)
-//{
-//    count = 8;
-//    emit dataChanged(QModelIndex(), QModelIndex());
-
-//    QModelIndex top = createIndex(0, 0);
-
-//    QModelIndex bottom = createIndex(2, 0);
-
-//    emit dataChanged(top, bottom);
-//}
-
-int ListModel::rowCount(const QModelIndex &) const
-{
-    return count;
-}
-
-QVariant ListModel::data(const QModelIndex &index, int role) const
-{
-    return QVariant{};
-    //return books[index.row()];
-    if (role == Qt::DisplayRole ) {
-        return QString{ (std::string{"Hello "} + std::to_string( index.row())).c_str() };
-    }
-    return QVariant{};
-}
 
 struct BookViewDelegate : public QStyledItemDelegate
 {
@@ -109,54 +75,7 @@ void ImageLoader::loadImage()
 }
 
 
-void ListWidgetItem::init()
-{
-    w = new QWidget();
-    auto gl = new QGridLayout{};
 
-    gl->setMargin(0);
-
-    gl->setContentsMargins(10, 10, 0, 0);
-
-    gl->setColumnMinimumWidth(0, 65);
-    gl->setColumnStretch(0, 0);
-
-    gl->setColumnMinimumWidth(1, 200);
-    gl->setColumnStretch(1, 1);
-
-    l = new QLabel{""};
-    imgL = new QImage;
-    imgL->load(QString { url.c_str() });
-    l->setPixmap(QPixmap::fromImage(*imgL));
-    l->adjustSize();
-
-    const std::function<void()> refresh = [](){};
-
-    gl->addWidget(l, 0, 0, Qt::AlignTop);
-    gl->addWidget(new QPushButton{"Heyooooo"}, 0, 1, Qt::AlignTop);
-
-    gl->setHorizontalSpacing(0);
-    gl->setVerticalSpacing(0);
-
-    w->setLayout(gl);
-
-    ImageLoader *il = new ImageLoader{remote, newFile, refresh, this};
-
-    qDebug() << w->sizeHint().height();
-
-}
-
-void ListWidgetItem::updateImage(const std::string &newImgPath)
-{
-    QImage *newImg = new QImage;
-    newImg->load(QString { newImgPath.c_str() });
-
-    l->setPixmap(QPixmap::fromImage(*newImg));
-    l->adjustSize();
-
-    qDebug() << "UPDATED";
-    qDebug() << w->sizeHint().height();
-}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -166,7 +85,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     std::string url = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
     std::string url2 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%2050)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
-    std::string url3 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%205)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
+    std::string url3 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%2050)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
     std::string url4 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20pages%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
     //auto res = system(command.c_str());
 
@@ -176,7 +95,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     curl = curl_easy_init();
     if(curl) {
-      curl_easy_setopt(curl, CURLOPT_URL, url4.c_str());
+      curl_easy_setopt(curl, CURLOPT_URL, url3.c_str());
       curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
       curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
       res = curl_easy_perform(curl);
@@ -204,6 +123,7 @@ MainWindow::MainWindow(QWidget *parent) :
       auto titleprotect = firstBook["title"].empty();
       auto crashProtect = pleaseDontCrash.empty();
 
+      auto booksCount = BooksMaybe->size();
       Data::Books::Book b = firstBook;
 
 
@@ -304,7 +224,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->textEdit->setPlainText(QString { (message + "\n\n" + q.serialize()).c_str() });
 
-    ListModel *model = new ListModel(nullptr);
+    ListModel<Book> *model = new ListModel<Book>(nullptr);
 
     ui->listView->setModel(model);
 
@@ -312,11 +232,11 @@ MainWindow::MainWindow(QWidget *parent) :
     std::function<void(QModelIndex, QModelIndex)> updater = [model](QModelIndex l, QModelIndex r) { model->modelDataChanged(l, r); };
 
     //auto w = getListItemWidget("/Users/adam.rackis/Desktop/covers/a.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-9c0e31fd-cf54-41b0-bc4b-2cc0f0badfeb.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_A.jpg", updater, model);
-    auto w = new ListWidgetItem{ "/Users/adam.rackis/Desktop/covers/a.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-9c0e31fd-cf54-41b0-bc4b-2cc0f0badfeb.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_A.jpg" };
+    auto w = new BookListWidgetItem{ "/Users/adam.rackis/Desktop/covers/a.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-9c0e31fd-cf54-41b0-bc4b-2cc0f0badfeb.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_A.jpg" };
     ui->listView->setIndexWidget(model->index(0), w->getWidget());
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
 
-    auto w2 = new ListWidgetItem{ "/Users/adam.rackis/Desktop/covers/b.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-59af95b4-32b0-41f7-8b7e-1bc02ae221b2.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_B.jpg" };
+    auto w2 = new BookListWidgetItem{ "/Users/adam.rackis/Desktop/covers/b.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-59af95b4-32b0-41f7-8b7e-1bc02ae221b2.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_B.jpg" };
     ui->listView->setIndexWidget(model->index(1), w2->getWidget());
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
     //ui->listView->setFixedSize(w->size());

@@ -6,49 +6,11 @@
 #include <QLabel>
 #include <QAbstractListModel>
 
+#include "booklistwidgetitem.h"
 #include "booktable.h"
 
 
 using Data::Books::Book;
-
-class ListModel : public QAbstractListModel
-{
-private:
-    std::vector<Book> books;
-    int count = 3;
-public:
-    void modelDataChanged(const QModelIndex &, const QModelIndex &);
-    ListModel(QObject *parent) : QAbstractListModel(parent), books({ Book{}, Book{}, Book{} }) {}
-    int rowCount(const QModelIndex &) const override;
-
-    QVariant data(const QModelIndex &index, int = Qt::DisplayRole) const override;
-};
-
-class ListWidgetItem : public QObject
-{
-    Q_OBJECT
-
-public:
-    ListWidgetItem(const std::string &url, const std::string &remote, const std::string &newFile) : url(url), remote(remote), newFile(newFile)
-    {
-        this->init();
-    }
-
-    void init();
-
-    QWidget* getWidget(){ return this->w; }
-
-public slots:
-    void updateImage(const std::string &);
-
-private:
-    QWidget* w;
-    QLabel *l;
-    QImage *imgL;
-    std::string url;
-    std::string remote;
-    std::string newFile;
-};
 
 namespace Ui {
 class MainWindow;
@@ -72,7 +34,7 @@ class ImageLoader : public QObject {
 
 public:
 
-    ImageLoader(const std::string &url, const std::string &name, const std::function<void()> &updater, ListWidgetItem *lwi) : name(name), url(url), updater(updater), lwi(lwi) {
+    ImageLoader(const std::string &url, const std::string &name, const std::function<void()> &updater, BookListWidgetItem *lwi) : name(name), url(url), updater(updater), lwi(lwi) {
         this->loadImage();
     }
 
@@ -89,7 +51,7 @@ private:
     std::string name;
     std::string url;
     std::function<void()> updater;
-    ListWidgetItem *lwi;
+    BookListWidgetItem *lwi;
 };
 
 #endif // MAINWINDOW_H
