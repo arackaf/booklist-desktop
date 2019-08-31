@@ -40,6 +40,7 @@ template <typename T>
 void ListModel<T>::newData(const std::vector<T> &newData)
 {
     items.assign(newData.begin(), newData.end());
+    this->modelDataChanged();
 }
 
 template <typename T>

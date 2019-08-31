@@ -21,7 +21,8 @@ void BookListWidgetItem::init()
 
     l = new QLabel{""};
     imgL = new QImage;
-    imgL->load(QString { url.c_str() });
+    //imgL->load(QString { url.c_str() });
+    imgL->load(QString{ "/Users/adam.rackis/Desktop/covers/a.jpg" });
     l->setPixmap(QPixmap::fromImage(*imgL));
     l->adjustSize();
 

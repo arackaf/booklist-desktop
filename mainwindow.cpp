@@ -11,6 +11,7 @@ using json = nlohmann::json;
 #include "mongoquerybase.h"
 #include "booktable.h"
 #include "listmodel.h"
+#include "graphQLLoader.h"
 
 #include <QAbstractListModel>
 #include <QStandardItemModel>
@@ -26,15 +27,8 @@ using json = nlohmann::json;
 #include <QObject>
 #include <fstream>
 
-static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
-{
-    ((std::string*)userp)->append((char*)contents, size * nmemb);
-    return size * nmemb;
-}
 
 using Data::Books::Book;
-
-
 
 
 struct BookViewDelegate : public QStyledItemDelegate
@@ -48,9 +42,6 @@ struct BookViewDelegate : public QStyledItemDelegate
         return QSize(0,  height); //enter your values here
     }
 };
-
-
-
 
 void ImageLoader::fileDownloaded(QNetworkReply* pReply) {
     QByteArray bts = pReply->readAll();
@@ -75,7 +66,11 @@ void ImageLoader::loadImage()
 }
 
 
-
+static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+    ((std::string*)userp)->append((char*)contents, size * nmemb);
+    return size * nmemb;
+}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -83,11 +78,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    std::string url = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
-    std::string url2 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%2050)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
     std::string url3 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%2050)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
-    std::string url4 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20pages%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
-    //auto res = system(command.c_str());
 
     CURL *curl;
     CURLcode res;
@@ -221,23 +212,38 @@ MainWindow::MainWindow(QWidget *parent) :
         message += std::to_string(i++) + ": " + el->serialize() + "\n\n";
     }
 
-
     ui->textEdit->setPlainText(QString { (message + "\n\n" + q.serialize()).c_str() });
 
     ListModel<Book> *model = new ListModel<Book>(nullptr);
 
+    GraphQLLoader<Book> loader { };
+
+    std::vector<Book> results = loader.load(url3);
+
+
     ui->listView->setModel(model);
+
+    model->newData(results);
+
+
+    for (size_t i = 0; i < results.size(); i++)
+    {
+        auto w = new BookListWidgetItem{ "/Users/adam.rackis/Desktop/covers/a.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-9c0e31fd-cf54-41b0-bc4b-2cc0f0badfeb.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_A.jpg" };
+        ui->listView->setIndexWidget(model->index(i), w->getWidget());
+    }
 
     //auto w = getListItemWidget("https://images-na.ssl-images-amazon.com/images/I/51QjQQuYcmL._SL75_.jpg");
     std::function<void(QModelIndex, QModelIndex)> updater = [model](QModelIndex l, QModelIndex r) { model->modelDataChanged(l, r); };
 
     //auto w = getListItemWidget("/Users/adam.rackis/Desktop/covers/a.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-9c0e31fd-cf54-41b0-bc4b-2cc0f0badfeb.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_A.jpg", updater, model);
-    auto w = new BookListWidgetItem{ "/Users/adam.rackis/Desktop/covers/a.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-9c0e31fd-cf54-41b0-bc4b-2cc0f0badfeb.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_A.jpg" };
-    ui->listView->setIndexWidget(model->index(0), w->getWidget());
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
 
-    auto w2 = new BookListWidgetItem{ "/Users/adam.rackis/Desktop/covers/b.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-59af95b4-32b0-41f7-8b7e-1bc02ae221b2.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_B.jpg" };
-    ui->listView->setIndexWidget(model->index(1), w2->getWidget());
+//    auto w = new BookListWidgetItem{ "/Users/adam.rackis/Desktop/covers/a.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-9c0e31fd-cf54-41b0-bc4b-2cc0f0badfeb.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_A.jpg" };
+//    ui->listView->setIndexWidget(model->index(0), w->getWidget());
+
+//    auto w2 = new BookListWidgetItem{ "/Users/adam.rackis/Desktop/covers/b.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-59af95b4-32b0-41f7-8b7e-1bc02ae221b2.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_B.jpg" };
+//    ui->listView->setIndexWidget(model->index(1), w2->getWidget());
+
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
     //ui->listView->setFixedSize(w->size());
 

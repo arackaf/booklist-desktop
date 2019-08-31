@@ -36,7 +36,9 @@ SOURCES += \
 HEADERS += \
         DataDisplay/booklistwidgetitem.h \
         DataDisplay/listmodel.h \
+        DataDisplay/listviewmanager.h \
         DataDisplay/listwidgetitembase.h \
+        DataLoading/graphQLLoader.h \
         Field/field.h \
         Filter/actualfilter.h \
         Filter/filter.h \
@@ -64,6 +66,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 
+INCLUDEPATH += DataLoading
 INCLUDEPATH += DataDisplay
 INCLUDEPATH += Field
 INCLUDEPATH += Filter
