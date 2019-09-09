@@ -12,7 +12,7 @@ void BookListWidgetItem::init()
 
     gl->setMargin(0);
 
-    gl->setContentsMargins(10, 10, 0, 0);
+    gl->setContentsMargins(10, 10, 0, 10);
 
     gl->setColumnMinimumWidth(0, 65);
     gl->setColumnStretch(0, 0);
@@ -23,7 +23,8 @@ void BookListWidgetItem::init()
     l = new QLabel{""};
     imgL = new QImage;
     //imgL->load(QString { url.c_str() });
-    imgL->load(QString{ "/Users/adam.rackis/Documents/booklist-local/smallImages/5d766937b552ee000400800f.jpg" });
+    //imgL->load(QString{ "/Users/adam.rackis/Documents/booklist-local/smallImages/5d766937b552ee000400800f.jpg" });
+    imgL->load(QString{ "/Users/adam.rackis/Desktop/SAVED_covers/yellow.png" });
     l->setPixmap(QPixmap::fromImage(*imgL));
     l->adjustSize();
 
@@ -49,11 +50,13 @@ void BookListWidgetItem::updateImage(const std::string &newImgPath)
 
     l->setPixmap(QPixmap::fromImage(*newImg));
     l->adjustSize();
+    this->w->adjustSize();
 }
 
 void BookListWidgetItem::bind(const Book &b)
 {
     titleLabel->setText(QString::fromStdString(b.title));    
+    return;
 
     std::string newPath = "/Users/adam.rackis/Documents/booklist-local/smallImages/" + b._id + ".jpg";
 

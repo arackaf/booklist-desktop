@@ -224,7 +224,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
     //ui->listView->setFixedSize(w->size());
 
-    ui->listView->setItemDelegate(new BookViewDelegate(95, this));
+    //ui->listView->setItemDelegate(new BookViewDelegate(95, this));
 
     ui->tableWidget->insertRow(0);
     ui->tableWidget->insertRow(1);
