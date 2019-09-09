@@ -12,6 +12,7 @@ using json = nlohmann::json;
 #include "bookTable.h"
 #include "listModel.h"
 #include "graphQLLoader.h"
+#include "listViewManager.h"
 
 #include <QAbstractListModel>
 #include <QStandardItemModel>
@@ -221,19 +222,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
     std::vector<Book> results = loader.load(url3);
 
+    ListViewManager<Book, BookListWidgetItem> *listViewManager = new ListViewManager<Book, BookListWidgetItem>{ ui->listView, 50 };
 
-    model->newData(results);
-    ui->listView->setModel(model);
+    listViewManager->setData(results);
 
 
     qDebug() << "RESULTS SIZE" << results.size();
-
-    for (size_t i = 0; i < results.size(); i++)
-    {
-        auto w = new BookListWidgetItem{ "/Users/adam.rackis/Desktop/covers/a.jpg", "https://my-library-cover-uploads.s3.amazonaws.com/bookCovers/573d1b97120426ef0078aa92/converted-cover-file-9c0e31fd-cf54-41b0-bc4b-2cc0f0badfeb.jpg", "/Users/adam.rackis/Desktop/SAVED_covers/NEW_A.jpg" };
-        w->bind(results[i]);
-        ui->listView->setIndexWidget(model->index(i), w->getWidget());
-    }
 
     //auto w = getListItemWidget("https://images-na.ssl-images-amazon.com/images/I/51QjQQuYcmL._SL75_.jpg");
     //std::function<void(QModelIndex, QModelIndex)> updater = [model](QModelIndex l, QModelIndex r) { model->modelDataChanged(l, r); };

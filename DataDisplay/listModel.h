@@ -10,7 +10,7 @@ class ListModel : public QAbstractListModel
 private:
     std::vector<T> items;
 public:
-    ListModel(QObject *parent) : QAbstractListModel(parent) { }
+    ListModel(QObject *parent = nullptr) : QAbstractListModel(parent) { }
     void modelDataChanged(const QModelIndex & = QModelIndex{}, const QModelIndex & = QModelIndex{});
     int rowCount(const QModelIndex & = QModelIndex{}) const override;
     QVariant data(const QModelIndex &index, int = Qt::DisplayRole) const override;
