@@ -51,12 +51,12 @@ void BookListWidgetItem::updateImage(const std::string &newImgPath)
     l->setPixmap(QPixmap::fromImage(*newImg));
     l->adjustSize();
     this->w->adjustSize();
+    this->itemUpdated();
 }
 
 void BookListWidgetItem::bind(const Book &b)
 {
-    titleLabel->setText(QString::fromStdString(b.title));    
-    return;
+    titleLabel->setText(QString::fromStdString(b.title));
 
     std::string newPath = "/Users/adam.rackis/Documents/booklist-local/smallImages/" + b._id + ".jpg";
 

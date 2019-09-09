@@ -11,7 +11,7 @@ class BookListWidgetItem : public QObject, public ListWidgetItem<Book>
     Q_OBJECT
 
 public:
-    BookListWidgetItem()
+    BookListWidgetItem(std::function<void()> itemUpdated) : ListWidgetItem<Book>(itemUpdated)
     {
         this->init();
     }

@@ -7,7 +7,7 @@ class ListWidgetItem
 {
 
 public:
-    ListWidgetItem(){}
+    ListWidgetItem(std::function<void()> itemUpdated) : itemUpdated(itemUpdated){}
 
     virtual void init() = 0;
 
@@ -16,4 +16,7 @@ public:
     virtual QWidget* getWidget() = 0;
 
     virtual ~ListWidgetItem(){}
+
+protected:
+    std::function<void()> itemUpdated;
 };
