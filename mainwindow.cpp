@@ -8,9 +8,9 @@
 using json = nlohmann::json;
 
 #include "query.h"
-#include "mongoquerybase.h"
-#include "booktable.h"
-#include "listmodel.h"
+#include "mongoQueryBase.h"
+#include "bookTable.h"
+#include "listModel.h"
 #include "graphQLLoader.h"
 
 #include <QAbstractListModel>

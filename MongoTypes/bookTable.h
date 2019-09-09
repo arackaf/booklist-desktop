@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mongoquerybase.h"
+#include "mongoQueryBase.h"
 #include "field.h"
 #include <json.hpp>
 

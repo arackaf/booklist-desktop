@@ -6,8 +6,8 @@
 #include <QLabel>
 #include <QAbstractListModel>
 
-#include "booklistwidgetitem.h"
-#include "booktable.h"
+#include "bookListWidgetItem.h"
+#include "bookTable.h"
 
 
 using Data::Books::Book;

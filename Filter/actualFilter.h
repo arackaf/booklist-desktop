@@ -2,7 +2,7 @@
 
 #include "field.h"
 #include "filter.h"
-#include "filterutils.h"
+#include "filterUtils.h"
 
 template <typename Of>
 struct Filter;

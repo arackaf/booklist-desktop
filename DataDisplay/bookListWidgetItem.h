@@ -1,7 +1,7 @@
 #pragma once
 
-#include "booktable.h"
-#include "listwidgetitembase.h"
+#include "bookTable.h"
+#include "listWidgetItemBase.h"
 
 using Data::Books::Book;
 

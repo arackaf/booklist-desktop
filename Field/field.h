@@ -2,7 +2,7 @@
 
 #include<string>
 #include "filter.h"
-#include "actualfilter.h"
+#include "actualFilter.h"
 
 template<typename Of>
 struct Filter;

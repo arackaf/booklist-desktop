@@ -5,9 +5,9 @@
 #include <iostream>
 #include <curl/curl.h>
 #include "field.h"
-#include "filterutils.h"
-#include "operatoror.h"
-#include "operatorless.h"
+#include "filterUtils.h"
+#include "operatorOr.h"
+#include "operatorLess.h"
 
 template<typename Of>
 struct Filter

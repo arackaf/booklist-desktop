@@ -27,27 +27,27 @@ CONFIG += c++17
 LIBS += /usr/local/curl/lib/libcurl.dylib -lcurl
 
 SOURCES += \
-    DataDisplay/booklistwidgetitem.cpp \
-        Filter/filterutils.cpp \
+    DataDisplay/bookListWidgetItem.cpp \
+    Filter/filterUtils.cpp \
         Query/query.cpp \
         main.cpp \
         mainwindow.cpp \
 
 HEADERS += \
-        DataDisplay/booklistwidgetitem.h \
-        DataDisplay/listmodel.h \
-        DataDisplay/listviewmanager.h \
-        DataDisplay/listwidgetitembase.h \
+        DataDisplay/bookListWidgetItem.h \
+        DataDisplay/listModel.h \
+        DataDisplay/listViewManager.h \
+        DataDisplay/listWidgetItemBase.h \
         DataLoading/graphQLLoader.h \
         Field/field.h \
-        Filter/actualfilter.h \
+        Filter/actualFilter.h \
         Filter/filter.h \
-        Filter/filterutils.h \
-        Filter/operatorless.h \
-        Filter/operatoror.h \
+        Filter/filterUtils.h \
+        Filter/operatorLess.h \
+        Filter/operatorOr.h \
         Filters/filter.h \
-        MongoTypes/booktable.h \
-        Query/mongoquerybase.h \
+        MongoTypes/bookTable.h \
+        Query/mongoQueryBase.h \
         Query/query.h \
         booktable.h \
         field.h \

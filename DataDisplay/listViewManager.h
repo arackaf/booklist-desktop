@@ -1,6 +1,6 @@
 #pragma once
 
-#include "listmodel.h"
+#include "listModel.h"
 
 template <typename T>
 class ListViewManager {
