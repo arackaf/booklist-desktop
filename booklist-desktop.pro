@@ -24,12 +24,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++17
+
 LIBS += /usr/local/curl/lib/libcurl.dylib -lcurl
 
+
 SOURCES += \
-    DataDisplay/bookListWidgetItem.cpp \
-    Filter/filterUtils.cpp \
+        DataDisplay/bookListWidgetItem.cpp \
+        Filter/filterUtils.cpp \
         Query/query.cpp \
+        Util/fileLoader.cpp \
         main.cpp \
         mainwindow.cpp \
 
@@ -49,6 +52,7 @@ HEADERS += \
         MongoTypes/bookTable.h \
         Query/mongoQueryBase.h \
         Query/query.h \
+        Util/fileLoader.h \
         booktable.h \
         field.h \
         filterutils.h \
@@ -72,6 +76,7 @@ INCLUDEPATH += Field
 INCLUDEPATH += Filter
 INCLUDEPATH += MongoTypes
 INCLUDEPATH += Query
+INCLUDEPATH += Util
 INCLUDEPATH += /usr/local/include
 INCLUDEPATH += /usr/local/Cellar/nlohmann_json/3.6.1/include/nlohmann
 

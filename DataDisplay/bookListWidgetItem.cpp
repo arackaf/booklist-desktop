@@ -23,7 +23,7 @@ void BookListWidgetItem::init()
     l = new QLabel{""};
     imgL = new QImage;
     //imgL->load(QString { url.c_str() });
-    imgL->load(QString{ "/Users/adam.rackis/Desktop/covers/a.jpg" });
+    imgL->load(QString{ "/Users/adam.rackis/Documents/booklist-local/smallImages/5d766937b552ee000400800f.jpg" });
     l->setPixmap(QPixmap::fromImage(*imgL));
     l->adjustSize();
 
@@ -53,7 +53,17 @@ void BookListWidgetItem::updateImage(const std::string &newImgPath)
 
 void BookListWidgetItem::bind(const Book &b)
 {
-    titleLabel->setText(QString::fromStdString(b.title));
+    titleLabel->setText(QString::fromStdString(b.title));    
+
+    std::string newPath = "/Users/adam.rackis/Documents/booklist-local/smallImages/" + b._id + ".jpg";
+
+    this->fileLoader = new FileLoader
+    {
+        b.smallImage,
+        newPath
+    };
+
+    connect(this->fileLoader, SIGNAL (doneDownloading(const std::string &)), this, SLOT(updateImage(const std::string &)));
 }
 
 QWidget* BookListWidgetItem::getWidget()

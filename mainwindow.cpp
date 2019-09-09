@@ -44,28 +44,6 @@ struct BookViewDelegate : public QStyledItemDelegate
     }
 };
 
-void ImageLoader::fileDownloaded(QNetworkReply* pReply) {
-    QByteArray bts = pReply->readAll();
-    std::ofstream file(this->name, std::ios::binary);
-    file.write(bts.data(), bts.size());
-    file.close();
-
-
-    pReply->deleteLater();
-
-    this->updater();
-    emit this->doneDownloading(this->name);
-}
-
-
-void ImageLoader::loadImage()
-{
-    QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(url.c_str())));
-    connect(&manager, SIGNAL (finished(QNetworkReply*)), this, SLOT(fileDownloaded(QNetworkReply*)));
-
-    connect(this, SIGNAL (doneDownloading(const std::string &)), lwi, SLOT(updateImage(const std::string &)));
-}
-
 
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
@@ -215,6 +193,8 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     ui->textEdit->setPlainText(QString { (message + "\n\n" + q.serialize()).c_str() });
+
+
 
     ListModel<Book> *model = new ListModel<Book>(nullptr);
 
