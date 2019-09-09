@@ -30,6 +30,7 @@ private:
     QWidget* w;
     QLabel *l;
     QImage *imgL;
+    QLabel *titleLabel;
     std::string url;
     std::string remote;
     std::string newFile;

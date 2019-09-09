@@ -3,6 +3,7 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QDebug>
+#include <QApplication>
 
 void BookListWidgetItem::init()
 {
@@ -29,7 +30,8 @@ void BookListWidgetItem::init()
     const std::function<void()> refresh = [](){};
 
     gl->addWidget(l, 0, 0, Qt::AlignTop);
-    gl->addWidget(new QPushButton{"Heyooooo"}, 0, 1, Qt::AlignTop);
+    titleLabel = new QLabel { "a" };
+    gl->addWidget(titleLabel, 0, 1, Qt::AlignTop);
 
     gl->setHorizontalSpacing(0);
     gl->setVerticalSpacing(0);
@@ -37,8 +39,6 @@ void BookListWidgetItem::init()
     w->setLayout(gl);
 
     //ImageLoader *il = new ImageLoader{remote, newFile, refresh, this};
-
-    qDebug() << w->sizeHint().height();
 
 }
 
@@ -49,14 +49,11 @@ void BookListWidgetItem::updateImage(const std::string &newImgPath)
 
     l->setPixmap(QPixmap::fromImage(*newImg));
     l->adjustSize();
-
-    qDebug() << "UPDATED";
-    qDebug() << w->sizeHint().height();
 }
 
 void BookListWidgetItem::bind(const Book &b)
 {
-
+    titleLabel->setText(QString::fromStdString(b.title));
 }
 
 QWidget* BookListWidgetItem::getWidget()

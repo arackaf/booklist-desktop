@@ -46,16 +46,13 @@ std::vector<T> GraphQLLoader<T>::load(std::string url)
 
       auto dataMaybe = j2.find("data");
       auto allBooksMaybe = dataMaybe->find("allBooks");
-      auto BooksMaybe = allBooksMaybe->find("Books");
+      auto booksMaybe = allBooksMaybe->find("Books");
 
-      auto booksCount = BooksMaybe->size();
+      auto booksCount = booksMaybe->size();
 
       std::vector<T> result(booksCount);
 
-      for (auto i = 0; i < booksCount; i++)
-      {
-          result.push_back(BooksMaybe->at(i));
-      }
+      result.assign(booksMaybe->begin(), booksMaybe->end());
 
       return std::move(result);
     }

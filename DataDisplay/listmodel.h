@@ -2,7 +2,7 @@
 
 #include <QAbstractListModel>
 #include <QModelIndex>
-
+#include <QDebug>
 
 template <typename T>
 class ListModel : public QAbstractListModel
@@ -10,9 +10,7 @@ class ListModel : public QAbstractListModel
 private:
     std::vector<T> items;
 public:
-    ListModel(QObject *parent) : QAbstractListModel(parent) {
-        this->newData({ T{}, T{} });
-    }
+    ListModel(QObject *parent) : QAbstractListModel(parent) { }
     void modelDataChanged(const QModelIndex & = QModelIndex{}, const QModelIndex & = QModelIndex{});
     int rowCount(const QModelIndex & = QModelIndex{}) const override;
     QVariant data(const QModelIndex &index, int = Qt::DisplayRole) const override;
@@ -40,6 +38,7 @@ template <typename T>
 void ListModel<T>::newData(const std::vector<T> &newData)
 {
     items.assign(newData.begin(), newData.end());
+    qDebug() << "NEW SIZE" << items.size();
     this->modelDataChanged();
 }
 
