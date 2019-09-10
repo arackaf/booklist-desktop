@@ -39,8 +39,9 @@ SOURCES += \
 HEADERS += \
         DataDisplay/bookListWidgetItem.h \
         DataDisplay/listModel.h \
+        DataDisplay/listViewItemDelegate.h \
         DataDisplay/listViewManager.h \
-        DataDisplay/listWidgetItemBase.h \
+        DataDisplay/listWidgetItem.h \
         DataLoading/graphQLLoader.h \
         Field/field.h \
         Filter/actualFilter.h \

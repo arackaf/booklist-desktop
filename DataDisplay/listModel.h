@@ -38,17 +38,11 @@ template <typename T>
 void ListModel<T>::newData(const std::vector<T> &newData)
 {
     items.assign(newData.begin(), newData.end());
-    qDebug() << "NEW SIZE" << items.size();
     this->modelDataChanged();
 }
 
 template <typename T>
 QVariant ListModel<T>::data(const QModelIndex &index, int role) const
 {
-    return QVariant{};
-    //return books[index.row()];
-    if (role == Qt::DisplayRole ) {
-        return QString{ (std::string{"Hello "} + std::to_string( index.row())).c_str() };
-    }
     return QVariant{};
 }
