@@ -9,7 +9,6 @@ class FileLoader : public QObject {
     Q_OBJECT
 
 public:
-
     FileLoader() { }
 
     void loadImage(const std::string &url, std::string);

@@ -206,9 +206,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     listViewManager->setData(results);
 
-
-    qDebug() << "RESULTS SIZE" << results.size();
-
     //auto w = getListItemWidget("https://images-na.ssl-images-amazon.com/images/I/51QjQQuYcmL._SL75_.jpg");
     //std::function<void(QModelIndex, QModelIndex)> updater = [model](QModelIndex l, QModelIndex r) { model->modelDataChanged(l, r); };
 

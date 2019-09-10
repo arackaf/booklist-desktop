@@ -34,5 +34,5 @@ private:
     QLabel *l;
     QImage *imgL;
     QLabel *titleLabel;
-    FileLoader *fileLoader;
+    std::shared_ptr<FileLoader> fileLoader;
 };

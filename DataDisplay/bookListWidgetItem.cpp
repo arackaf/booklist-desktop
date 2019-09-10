@@ -69,12 +69,15 @@ void BookListWidgetItem::bind(const Book &b)
 {
     titleLabel->setText(QString::fromStdString(b.title));
 
-    std::string newPath = "/Users/adam.rackis/Documents/booklist-local/smallImages/" + b._id + ".jpg";
+    std::string newPath = "/Users/adam.rackis/Documents/booklist-local/smallImages/" + imageUrlToFilename(b.smallImage) + ".jpg";
 
-    this->fileLoader = new FileLoader{};
+    if (!this->fileLoader)
+    {
+        this->fileLoader = std::make_shared<FileLoader>();
+    }
     this->fileLoader->loadImage(b.smallImage, newPath);
 
-    connect(this->fileLoader, SIGNAL (doneDownloading(const std::string &)), this, SLOT(updateImage(const std::string &)));
+    connect(this->fileLoader.get(), SIGNAL (doneDownloading(const std::string &)), this, SLOT(updateImage(const std::string &)));
 }
 
 QWidget* BookListWidgetItem::getWidget()
