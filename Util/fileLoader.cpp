@@ -1,4 +1,8 @@
+#include <sys/stat.h>
+#include <unistd.h>
+#include <string>
 #include <fstream>
+
 #include "fileLoader.h"
 
 #include <QDebug>
@@ -18,6 +22,13 @@ void FileLoader::fileDownloaded(QNetworkReply* pReply, const std::string &savePa
 
 void FileLoader::loadImage(const std::string &url, std::string savePath)
 {
+    qDebug() << "Downloading ... ";
     QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(url.c_str())));
     QObject::connect(&manager, &QNetworkAccessManager::finished, [this, savePath](QNetworkReply* pReply) { this->fileDownloaded(pReply, savePath); });
+}
+
+bool FileLoader::fileExists(const std::string &name)
+{
+    std::ifstream f(name.c_str());
+    return f.good();
 }

@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QApplication>
 
+#include <fstream>
+
 std::string imageUrlToFilename(std::string s)
 {
     size_t nextLoc;
@@ -69,15 +71,24 @@ void BookListWidgetItem::bind(const Book &b)
 {
     titleLabel->setText(QString::fromStdString(b.title));
 
-    std::string newPath = "/Users/adam.rackis/Documents/booklist-local/smallImages/" + imageUrlToFilename(b.smallImage) + ".jpg";
+    std::string smallImageLocalPath = "/Users/adam.rackis/Documents/booklist-local/smallImages/" + imageUrlToFilename(b.smallImage);
 
-    if (!this->fileLoader)
+
+    if (!FileLoader::fileExists(smallImageLocalPath))
     {
-        this->fileLoader = std::make_shared<FileLoader>();
+        if (!this->fileLoader)
+        {
+            this->fileLoader = std::make_shared<FileLoader>();
+            connect(this->fileLoader.get(), SIGNAL (doneDownloading(const std::string &)), this, SLOT(updateImage(const std::string &)));
+        }
+        this->fileLoader->loadImage(b.smallImage, smallImageLocalPath);
     }
-    this->fileLoader->loadImage(b.smallImage, newPath);
+    else
+    {
+        this->updateImage(smallImageLocalPath);
+    }
 
-    connect(this->fileLoader.get(), SIGNAL (doneDownloading(const std::string &)), this, SLOT(updateImage(const std::string &)));
+
 }
 
 QWidget* BookListWidgetItem::getWidget()
