@@ -12,7 +12,7 @@ public:
     static bool fileExists(const std::string &path);
     FileLoader() { }
 
-    void loadImage(const std::string &url, std::string);
+    void loadImage(const std::string &url, const std::string &);
 
 signals:
     void doneDownloading(const std::string &);

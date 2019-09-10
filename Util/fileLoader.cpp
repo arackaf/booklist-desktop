@@ -20,7 +20,7 @@ void FileLoader::fileDownloaded(QNetworkReply* pReply, const std::string &savePa
 }
 
 
-void FileLoader::loadImage(const std::string &url, std::string savePath)
+void FileLoader::loadImage(const std::string &url, const std::string &savePath)
 {
     qDebug() << "Downloading ... ";
     QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(url.c_str())));
