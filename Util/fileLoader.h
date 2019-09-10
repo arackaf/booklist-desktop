@@ -10,20 +10,16 @@ class FileLoader : public QObject {
 
 public:
 
-    FileLoader(const std::string &url, const std::string &savePath) : url(url), savePath(savePath) {
-        this->loadImage();
-    }
+    FileLoader() { }
 
-    void loadImage();
-
-public slots:
-    void fileDownloaded(QNetworkReply *pReply);
+    void loadImage(const std::string &url, std::string);
 
 signals:
     void doneDownloading(const std::string &);
 
+private slots:
+    void fileDownloaded(QNetworkReply *pReply, const std::string &savePath);
+
 private:
     QNetworkAccessManager manager;
-    std::string url;
-    std::string savePath;
 };

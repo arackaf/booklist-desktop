@@ -1,9 +1,12 @@
 #include <fstream>
 #include "fileLoader.h"
 
-void FileLoader::fileDownloaded(QNetworkReply* pReply) {
+#include <QDebug>
+
+void FileLoader::fileDownloaded(QNetworkReply* pReply, const std::string &savePath) {
     QByteArray bts = pReply->readAll();
-    std::ofstream file(this->savePath, std::ios::binary);
+
+    std::ofstream file(savePath, std::ios::binary);
     file.write(bts.data(), bts.size());
     file.close();
 
@@ -13,8 +16,8 @@ void FileLoader::fileDownloaded(QNetworkReply* pReply) {
 }
 
 
-void FileLoader::loadImage()
+void FileLoader::loadImage(const std::string &url, std::string savePath)
 {
     QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(url.c_str())));
-    connect(&manager, SIGNAL (finished(QNetworkReply*)), this, SLOT(fileDownloaded(QNetworkReply*)));
+    QObject::connect(&manager, &QNetworkAccessManager::finished, [this, savePath](QNetworkReply* pReply) { this->fileDownloaded(pReply, savePath); });
 }

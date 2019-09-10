@@ -5,6 +5,17 @@
 #include <QDebug>
 #include <QApplication>
 
+std::string imageUrlToFilename(std::string s)
+{
+    size_t nextLoc;
+    while ((nextLoc = s.find("/")) != std::string::npos)
+    {
+        s = s.substr(nextLoc + 1, s.length() - (nextLoc + 1));
+    }
+
+    return s;
+}
+
 void BookListWidgetItem::init()
 {
     w = new QWidget();
@@ -60,11 +71,8 @@ void BookListWidgetItem::bind(const Book &b)
 
     std::string newPath = "/Users/adam.rackis/Documents/booklist-local/smallImages/" + b._id + ".jpg";
 
-    this->fileLoader = new FileLoader
-    {
-        b.smallImage,
-        newPath
-    };
+    this->fileLoader = new FileLoader{};
+    this->fileLoader->loadImage(b.smallImage, newPath);
 
     connect(this->fileLoader, SIGNAL (doneDownloading(const std::string &)), this, SLOT(updateImage(const std::string &)));
 }

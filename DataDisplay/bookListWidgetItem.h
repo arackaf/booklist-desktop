@@ -6,6 +6,8 @@
 
 using Data::Books::Book;
 
+std::string imageUrlToFilename(std::string);
+
 class BookListWidgetItem : public QObject, public ListWidgetItem<Book>
 {
     Q_OBJECT
