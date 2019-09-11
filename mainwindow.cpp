@@ -232,6 +232,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableWidget->insertColumn(2);
     ui->tableWidget->insertColumn(3);
 
+
+
+    connect(ui->pushButton, &QPushButton::released, [](){ qDebug() << "CLICKED"; });
+
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
 
     //model->update();
