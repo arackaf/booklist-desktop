@@ -7,21 +7,25 @@
 
 using json = nlohmann::json;
 
+
 template <typename T>
 class GraphQLLoader {
+
 public:
-    GraphQLLoader()
+    GraphQLLoader(const std::function<void(std::vector<T>)> cb) : cb(cb)
     {
         curl = curl_easy_init();
     }
-    std::vector<T> load(std::string url);
+    void load(std::string url);
 
     ~GraphQLLoader()
     {
         curl_easy_cleanup(curl);
     }
 
+
 private:
+    std::function<void(std::vector<T>)> cb;
     CURL *curl;
     CURLcode res;
     std::string readBuffer;
@@ -34,7 +38,7 @@ static size_t CurlWriteCallback(void *contents, size_t size, size_t nmemb, void 
 }
 
 template <typename T>
-std::vector<T> GraphQLLoader<T>::load(std::string url)
+void GraphQLLoader<T>::load(std::string url)
 {
     if(curl) {
       curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
@@ -54,7 +58,8 @@ std::vector<T> GraphQLLoader<T>::load(std::string url)
 
       result.assign(booksMaybe->begin(), booksMaybe->end());
 
-      return std::move(result);
+      this->cb(std::move(result));
+      //return std::move(result);
     }
 }
 

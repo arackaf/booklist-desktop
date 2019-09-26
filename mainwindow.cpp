@@ -198,13 +198,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ListModel<Book> *model = new ListModel<Book>(nullptr);
 
-    GraphQLLoader<Book> loader { };
-
-    std::vector<Book> results = loader.load(url3);
-
     ListViewManager<Book, BookListWidgetItem> *listViewManager = new ListViewManager<Book, BookListWidgetItem>{ ui->listView, 50 };
 
-    listViewManager->setData(results);
+
+    GraphQLLoader<Book> loader { [listViewManager](std::vector<Book> books) { listViewManager->setData(books); } };
+
+    loader.load(url3);
+
+    //listViewManager->setData(results);
 
     //auto w = getListItemWidget("https://images-na.ssl-images-amazon.com/images/I/51QjQQuYcmL._SL75_.jpg");
     //std::function<void(QModelIndex, QModelIndex)> updater = [model](QModelIndex l, QModelIndex r) { model->modelDataChanged(l, r); };
