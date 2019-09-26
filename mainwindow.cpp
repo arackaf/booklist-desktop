@@ -60,6 +60,34 @@ MainWindow::MainWindow(QWidget *parent) :
     std::string _url3 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%2050%2C%20userId%3A%20%22HelloWorld%22)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
     std::string url3 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%2050%2C%20userId%3A%20%22573d1b97120426ef0078aa92%22%2C%20SORT%3A%7Btitle%3A%201%7D)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
 
+    std::string url4_base1 = "https://mylibrary.io/graphql-public?query=query%20allBooks(%24page%3A%20Int)%20%7B%20%0A%20%20allBooks(PAGE%3A%24page%2C%20PAGE_SIZE%3A%2050%2C%20userId%3A%20%22573d1b97120426ef0078aa92%22%2C%20SORT%3A%7Btitle%3A%201%7D)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D&operationName=allBooks&variables=";
+    std::string url4_good1 = "https://mylibrary.io/graphql-public?query=query%20allBooks(%24page%3A%20Int)%20%7B%20%0A%20%20allBooks(PAGE%3A%24page%2C%20PAGE_SIZE%3A%2050%2C%20userId%3A%20%22573d1b97120426ef0078aa92%22%2C%20SORT%3A%7Btitle%3A%201%7D)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D&operationName=allBooks&variables=%7B%0A%20%20%22page%22%3A%202%0A%7D";
+    std::string url4_test1 = "https://mylibrary.io/graphql-public?query=query%20allBooks(%24page%3A%20Int)%20%7B%20%0A%20%20allBooks(PAGE%3A%24page%2C%20PAGE_SIZE%3A%2050%2C%20userId%3A%20%22573d1b97120426ef0078aa92%22%2C%20SORT%3A%7Btitle%3A%201%7D)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D&operationName=allBooks&variables=%7B%22page%22%3A2%7D";
+
+    std::string masterBase = "https://mylibrary.io/graphql-public?query=";
+    std::string url4_base2 = "query allBooks($page:Int){allBooks(PAGE:$page,PAGE_SIZE:50,userId:\"573d1b97120426ef0078aa92\",SORT:{title:1}){Books{title authors _id ean smallImage mediumImage userId}}}";
+
+//https://mylibrary.io/graphql-public?query=query%20allBooks%28%24page%3AInt%29%7BallBooks%28PAGE%3A%24page%2CPAGE_SIZE%3A50%2CuserId%3A%22573d1b97120426ef0078aa92%22%2CSORT%3A%7Btitle%3A1%7D%29%7BBooks%7Btitle%20authors%20_id%20ean%20smallImage%20mediumImage%20userId%7D%7D%7D%26operationName%3DallBooks%26variables%3D%7B%22page%22%3A2%7D
+
+    auto getUrl = [&masterBase](const std::string &query, const std::string &operation, const std::string variables)
+    {
+        return masterBase + encode(query) + "&operationName=" + operation + "&variables=" + encode(variables);
+    };
+
+    //qDebug() << url4.c_str();
+
+    json searchObject;
+    searchObject["page"] = 2;
+
+    std::string variables = searchObject.dump();
+    qDebug() << variables.c_str();
+
+    std::string url4 = url4_base1 + encode(variables);
+
+    std::string final = getUrl(url4_base2, "allBooks" ,variables);
+    qDebug() << url4.c_str() << "\n\n" << final.c_str() << "\n\n";
+
+
     CURL *curl;
     CURLcode res;
     std::string readBuffer;
