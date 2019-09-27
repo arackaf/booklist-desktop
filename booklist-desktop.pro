@@ -31,6 +31,7 @@ LIBS += /usr/local/curl/lib/libcurl.dylib -lcurl
 SOURCES += \
         DataDisplay/bookListWidgetItem.cpp \
         Filter/filterUtils.cpp \
+        Query/graphqlUrlGenerator.cpp \
         Query/query.cpp \
         Util/fileLoader.cpp \
         main.cpp \
@@ -51,6 +52,7 @@ HEADERS += \
         Filter/operatorOr.h \
         Filters/filter.h \
         MongoTypes/bookTable.h \
+        Query/graphqlUrlGenerator.h \
         Query/mongoQueryBase.h \
         Query/query.h \
         Util/fileLoader.h \
