@@ -7,7 +7,7 @@ GraphqlUrlGenerator::GraphqlUrlGenerator()
 
 }
 
-std::string GraphqlUrlGenerator::MasterBase = "";
+std::string GraphqlUrlGenerator::MasterBase = "https://mylibrary.io/graphql-public?query=";
 
 std::string GraphqlUrlGenerator::GenerateGraphqlUrl(const std::string &query, const std::string &variables)
 {

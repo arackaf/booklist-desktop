@@ -7,6 +7,11 @@
 
 using json = nlohmann::json;
 
+static size_t CurlWriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+    ((std::string*)userp)->append((char*)contents, size * nmemb);
+    return size * nmemb;
+}
 
 template <typename T>
 class GraphQLLoader {
@@ -31,16 +36,14 @@ private:
     std::string readBuffer;
 };
 
-static size_t CurlWriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
-{
-    ((std::string*)userp)->append((char*)contents, size * nmemb);
-    return size * nmemb;
-}
+
 
 template <typename T>
 void GraphQLLoader<T>::load(std::string url)
 {
+
     if(curl) {
+      readBuffer.clear();
       curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
       curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CurlWriteCallback);
       curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
@@ -59,7 +62,6 @@ void GraphQLLoader<T>::load(std::string url)
       result.assign(booksMaybe->begin(), booksMaybe->end());
 
       this->cb(std::move(result));
-      //return std::move(result);
     }
 }
 
