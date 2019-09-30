@@ -24,9 +24,9 @@ void FileLoader::loadImage(const std::string &url, const std::string &savePath)
 {
     qDebug() << "Downloading ... ";
     QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(url.c_str())));
-    QObject::connect(&manager, &QNetworkAccessManager::finished, [this, savePath](QNetworkReply* pReply) {
-        this->fileDownloaded(pReply, savePath);
-        manager.disconnect();
+    QObject::connect(reply, &QNetworkReply::finished, [this, savePath, reply]() {
+        reply->disconnect();
+        this->fileDownloaded(reply, savePath);
     });
 }
 
