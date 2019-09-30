@@ -35,4 +35,5 @@ private:
     QImage *imgL;
     QLabel *titleLabel;
     std::shared_ptr<FileLoader> fileLoader;
+    std::string currentImagePath;
 };

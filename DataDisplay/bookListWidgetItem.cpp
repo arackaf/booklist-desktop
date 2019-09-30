@@ -58,6 +58,9 @@ void BookListWidgetItem::init()
 
 void BookListWidgetItem::updateImage(const std::string &newImgPath)
 {
+    if (this->currentImagePath != newImgPath){
+        return;
+    }
     QImage *newImg = new QImage;
     newImg->load(QString { newImgPath.c_str() });
 
@@ -72,6 +75,7 @@ void BookListWidgetItem::bind(const Book &b)
     titleLabel->setText(QString::fromStdString(b.title));
 
     std::string smallImageLocalPath = "/Users/adam.rackis/Documents/booklist-local/smallImages/" + imageUrlToFilename(b.smallImage);
+    this->currentImagePath = smallImageLocalPath;
 
 
     if (!FileLoader::fileExists(smallImageLocalPath))
@@ -79,7 +83,7 @@ void BookListWidgetItem::bind(const Book &b)
         if (!this->fileLoader)
         {
             this->fileLoader = std::make_shared<FileLoader>();
-            connect(this->fileLoader.get(), SIGNAL (doneDownloading(const std::string &)), this, SLOT(updateImage(const std::string &)));
+            connect(this->fileLoader.get(), &FileLoader::doneDownloading, [this](const std::string &str) { this->updateImage(str); });
         }
         this->fileLoader->loadImage(b.smallImage, smallImageLocalPath);
     }
