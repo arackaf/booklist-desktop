@@ -73,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //qDebug() << url4.c_str();
 
     json searchObject;
-    searchObject["page"] = 1;
+    searchObject["page"] = 99;
 
     std::string variables = searchObject.dump();
     qDebug() << variables.c_str();
@@ -90,10 +90,24 @@ MainWindow::MainWindow(QWidget *parent) :
 
     auto q0 = makeFilter<Book>();
 
+    ActualFilter foo { title, { std::string{"A"}, std::string{"B"} }, "in" };
+    qDebug() << "\n\nDeduction Guide 1\n\n" << foo.serialize().c_str() << "\n\n";
+
+    ActualFilter foo2 { title, std::initializer_list<std::string>{ "C", "D" }, "in" };
+    qDebug() << "\n\nDeduction Guide 2\n\n" << foo2.serialize().c_str() << "\n\n";
+
+    ActualFilter foo3 { title, { "E", "F" }, "in" };
+    qDebug() << "\n\nDeduction Guide 3\n\n" << foo3.serialize().c_str() << "\n\n";
+
+
     auto q = makeFilter(
 //        (weight < 10 || pages < 500) && (pages < 100 || weight < 90),
 
         title == "Hello World",
+        authors.matches({"a", "b"}),
+        title.in({ "t1", "t2" }),
+        weight.in({ 2.2, 3.3, 4.4 }),
+
 
         //Data::Subjects::name == "junk",
 

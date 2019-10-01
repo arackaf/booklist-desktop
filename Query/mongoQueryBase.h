@@ -18,6 +18,12 @@ struct FilterType<std::shared_ptr<ActualFilter<T, Of>>>
     using Type = T;
 };
 
+template <typename T, typename Of, typename ValueType>
+struct FilterType<std::shared_ptr<ActualFilter<T, Of, ValueType>>>
+{
+    using Type = T;
+};
+
 template <typename T>
 struct FilterType<std::shared_ptr<OrFilter<T>>>
 {

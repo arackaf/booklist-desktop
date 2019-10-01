@@ -1,5 +1,7 @@
 #pragma once
 
+#include <json.hpp>
+
 #include "field.h"
 #include "filter.h"
 #include "filterUtils.h"
@@ -24,33 +26,26 @@ struct ActualFilter: public Filter<Of>
     std::string op;
     Field<Of, FieldType> f;
     std::string serialize() override;
+    void addToSerialization(nlohmann::json &);
 };
 
 template <typename Of, typename FieldType>
-ActualFilter(Field<Of, FieldType>, std::initializer_list<FieldType>, std::string) -> ActualFilter<Of, FieldType, std::initializer_list<FieldType>>;
+ActualFilter(Field<Of, FieldType>, const std::initializer_list<FieldType> &, std::string) -> ActualFilter<Of, FieldType, std::initializer_list<FieldType>>;
+
+template <typename Of>
+ActualFilter(Field<Of, std::string>, const std::initializer_list<const char *> &, std::string) -> ActualFilter<Of, std::string, std::initializer_list<std::string>>;
 
 
 template<typename Of, typename FieldType, typename FilterValueType>
 std::string ActualFilter<Of, FieldType, FilterValueType>::serialize()
 {
-    return serializeActualFilter(this->op, this->f, this->val);
+    nlohmann::json j;
+    addToSerialization(j);
+    return j.dump();
 }
 
 template<typename Of, typename FieldType, typename FilterValueType>
-std::string serializeActualFilter(const std::string &op, const Field<Of, FieldType> &f, const FilterValueType val)
-{
-
-    auto res = opLookup.find(op);
-    if (res == opLookup.end())
-    {
-        throw "Op not found: " + op;
-    }
-
-    return "\"" + f.name + res->second + "\":" + printJsonValue(val);
-}
-
-template<typename Of, typename FieldType>
-std::string serializeActualFilter(const std::string &op, const Field<Of, FieldType> &f, const std::initializer_list<FieldType> &val)
+void ActualFilter<Of, FieldType, FilterValueType>::addToSerialization(nlohmann::json &j)
 {
     auto res = opLookup.find(op);
     if (res == opLookup.end())
@@ -58,12 +53,6 @@ std::string serializeActualFilter(const std::string &op, const Field<Of, FieldTy
         throw "Op not found: " + op;
     }
 
-    std::string result = "\"" + f.name + res->second + "\":[";
-
-    size_t i = 1;
-    for (const auto &el : val)
-    {
-        result += printJsonValue(el) + (i++ < val.size() ? "," : "]");
-    }
-    return result;
+    j[f.name + res->second] = val;
 }
+

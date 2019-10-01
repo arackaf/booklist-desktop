@@ -53,7 +53,6 @@ SERIALIZE(Books, Book, BookList)
 
 #undef Field
 #undef ArrayField
-
     
 // ------------------------------- Type Filters -------------------------------------------
 

@@ -4,6 +4,8 @@
 #include <map>
 #include <iostream>
 #include <curl/curl.h>
+#include <json.hpp>
+
 #include "field.h"
 #include "filterUtils.h"
 #include "operatorOr.h"
@@ -14,6 +16,7 @@ struct Filter
 {    
     using OfType = Of;
     virtual std::string serialize() = 0;
+    virtual void addToSerialization(nlohmann::json &)  = 0;
     virtual ~Filter(){}
 };
 
@@ -30,6 +33,7 @@ struct OrFilter : public FilterList<Of>
     using FilterList<Of>::FilterList;
     std::string filterName { "OR" };
     std::string serialize() override;
+    void addToSerialization(nlohmann::json &) override;
 };
 
 template <typename Of>
@@ -45,11 +49,17 @@ std::string OrFilter<Of>::serialize()
     return result;
 }
 
+template <typename Of>
+void OrFilter<Of>::addToSerialization(nlohmann::json &j)
+{
+}
+
 template<typename Of>
 struct AndFilter : public FilterList<Of>
 {
     using FilterList<Of>::FilterList;
     std::string serialize() override;
+    void addToSerialization(nlohmann::json &);
 };
 
 template <typename Of>
@@ -63,6 +73,11 @@ std::string AndFilter<Of>::serialize()
         result += el->serialize() + (i++ < this->filters.size() ? "," : "");
     }
     return result;
+}
+
+template <typename Of>
+void AndFilter<Of>::addToSerialization(nlohmann::json &j)
+{
 }
 
 
