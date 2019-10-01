@@ -9,7 +9,6 @@
 using json = nlohmann::json;
 
 #include "query.h"
-#include "mongoQueryBase.h"
 #include "bookTable.h"
 #include "listModel.h"
 #include "graphQLLoader.h"
@@ -19,7 +18,6 @@ using json = nlohmann::json;
 #include <QStandardItemModel>
 #include <QStringList>
 #include <QVBoxLayout>
-#include <QStyledItemDelegate>
 #include <QPushButton>
 #include <QLabel>
 
@@ -31,19 +29,6 @@ using json = nlohmann::json;
 #include <QDebug>
 
 using Data::Books::Book;
-
-
-struct BookViewDelegate : public QStyledItemDelegate
-{
-    BookViewDelegate(int height, QObject* parent = nullptr) : QStyledItemDelegate(parent), height(height) {}
-
-    int height;
-
-    QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
-    {
-        return QSize(0,  height); //enter your values here
-    }
-};
 
 
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)

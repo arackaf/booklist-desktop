@@ -53,7 +53,6 @@ HEADERS += \
         Filters/filter.h \
         MongoTypes/bookTable.h \
         Query/graphqlUrlGenerator.h \
-        Query/mongoQueryBase.h \
         Query/query.h \
         Util/fileLoader.h \
         booktable.h \
