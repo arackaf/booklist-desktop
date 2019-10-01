@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <json.hpp>
 #include "filter.h"
 
 template<typename T>
@@ -10,7 +11,8 @@ template <>
 std::string encode (std::string val);
 
 template <typename Of>
-class Query {
+class Query
+{
 public:
     Query(std::initializer_list<std::shared_ptr<Filter<Of>>> passedFilters) : filters(passedFilters) {}
     std::vector<std::shared_ptr<Filter<Of>>> filters;
@@ -21,18 +23,13 @@ public:
 template <typename Of>
 std::string Query<Of>::serialize()
 {
-    std::string result{};
+    nlohmann::json result;
 
     for (size_t i = 0; i < filters.size(); i++)
     {
-        if (i > 0)
-        {
-            result += ",";
-        }
-        result += filters[i]->serialize();
+        filters[i]->addToSerialization(result);
     }
-    result = "{" + result + "}";
-    return encode(result);
+    return result.dump();
 }
 
 template <typename T>

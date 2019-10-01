@@ -26,7 +26,7 @@ struct ActualFilter: public Filter<Of>
     std::string op;
     Field<Of, FieldType> f;
     std::string serialize() override;
-    void addToSerialization(nlohmann::json &);
+    void addToSerialization(nlohmann::json &) override;
 };
 
 template <typename Of, typename FieldType>

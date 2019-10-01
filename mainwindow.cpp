@@ -37,6 +37,17 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
     return size * nmemb;
 }
 
+struct PersonTemp {
+    std::string name;
+};
+
+struct PersonTempSub : public PersonTemp {};
+
+void to_json(nlohmann::json &j, const std::shared_ptr<PersonTemp> &p)
+{
+    j["name"] = p->name;
+}
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -84,6 +95,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ActualFilter foo3 { title, { "E", "F" }, "in" };
     qDebug() << "\n\nDeduction Guide 3\n\n" << foo3.serialize().c_str() << "\n\n";
 
+    nlohmann::json jsonTest;
+    jsonTest["OR"] = std::vector<std::shared_ptr<PersonTemp>>{ std::make_shared<PersonTempSub>(PersonTempSub{{"Adam"}}), std::make_shared<PersonTempSub>(PersonTempSub{"Bob"}), std::make_shared<PersonTempSub>(PersonTempSub{"Matt"}) };
+    qDebug() << "\n\nTEST\n\n" << jsonTest.dump().c_str() << "\n\n";
 
     auto q = makeFilter(
 //        (weight < 10 || pages < 500) && (pages < 100 || weight < 90),
@@ -91,11 +105,14 @@ MainWindow::MainWindow(QWidget *parent) :
         title == "Hello World",
         authors.matches({"a", "b"}),
         title.in({ "t1", "t2" }),
-        weight.in({ 2.2, 3.3, 4.4 }),
+        weight.in({ 2.2, 3.3, 4.4 })
+
+        , title == "Title 1" || title == "Title 2"
 
 
         //Data::Subjects::name == "junk",
 
+            /*
         weight < 50 || weight < 100 || weight < 100,
         weight < 50 || weight < 100 || weight < 110 || weight < 120,
         weight < 10 || (weight < 50 || weight < 100),
@@ -110,10 +127,14 @@ MainWindow::MainWindow(QWidget *parent) :
         weight < 50 || weight < 60 || (weight < 100 && weight < 200),
         (weight < 50 || weight < 60) || (weight < 100 && weight < 200),
         (weight < 50 || weight < 100) && weight < 200,
+             */
 
 //        title == "Hello World",
 //        "World Hello" == smallImage,
-        title.in({ "title1", "title2" }) || weight < 50,
+
+             /*
+                title.in({ "title1", "title2" }) || weight < 50,
+            */
 //        pages == 20,
 //        20 == pages,
 
@@ -131,11 +152,13 @@ MainWindow::MainWindow(QWidget *parent) :
 //        title.as("titleAlias") == "Hello World",
 //        "Hello World" == title.as("titleAlias2"),
 
+                /*
         weight < 10 || weight < 50,
         //pages == 20,
         pages < 20,
         weight < 10 || (weight < 50 || weight < 100),
         weight < 10 || weight < 50 || weight < 100
+                */
     );
 
     //std::shared_ptr<Filter<Books>> x = weight < 10 || weight < 50;

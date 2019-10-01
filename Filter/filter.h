@@ -21,10 +21,23 @@ struct Filter
 };
 
 template<typename Of>
+void to_json(nlohmann::json &j, const Filter<Of> &f)
+{
+    f.addToSerialization(j);
+}
+
+template<typename Of>
+void to_json(nlohmann::json &j, const std::shared_ptr<Filter<Of>> &f)
+{
+    f->addToSerialization(j);
+}
+
+template<typename Of>
 struct FilterList : public Filter<Of>
 {
     FilterList(const std::initializer_list<std::shared_ptr<Filter<Of>>> &filters) : filters(filters) {}
     std::vector<std::shared_ptr<Filter<Of>>> filters;
+    virtual void addToSerialization(nlohmann::json &) = 0;
 };
 
 template<typename Of>
@@ -52,6 +65,7 @@ std::string OrFilter<Of>::serialize()
 template <typename Of>
 void OrFilter<Of>::addToSerialization(nlohmann::json &j)
 {
+    j[this->filterName] = this->filters;
 }
 
 template<typename Of>
@@ -78,6 +92,7 @@ std::string AndFilter<Of>::serialize()
 template <typename Of>
 void AndFilter<Of>::addToSerialization(nlohmann::json &j)
 {
+
 }
 
 

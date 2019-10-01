@@ -23,7 +23,7 @@ template
     typename Of = typename FilterLHS::OfType,
     std::enable_if_t<std::is_base_of_v<Filter<Of>, FilterLHS> && std::is_base_of_v<Filter<Of>, FilterRHS>, int> = 0
 >
-std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<FilterLHS> &lhs, const std::shared_ptr<FilterRHS> &rhs)
+std::shared_ptr<Filter<Of>> operator ||(const std::shared_ptr<FilterLHS> &lhs, const std::shared_ptr<FilterRHS> &rhs)
 {
     return std::make_shared<OrFilter<Of>>(OrFilter<Of>{ lhs, rhs });
 }
