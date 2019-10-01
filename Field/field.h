@@ -2,7 +2,7 @@
 
 #include<string>
 #include "filter.h"
-#include "actualfilter.h"
+#include "actualFilter.h"
 
 template<typename Of>
 struct Filter;
@@ -23,7 +23,7 @@ struct Field
     Field(std::string &&val): name(std::move(val)) { }
     std::string name;
 
-    std::shared_ptr<ActualFilter<Of, T, std::initializer_list<T>>> in(const std::initializer_list<T> &);
+    std::shared_ptr<Filter<Of>> in(const std::initializer_list<T> &);
     Field as(const std::string &);
 };
 
@@ -41,15 +41,15 @@ Field<Of, T> Field<Of, T>::as(const std::string &alias)
 }
 
 template <typename Of, typename T>
-std::shared_ptr<ActualFilter<Of, T, std::initializer_list<T>>> Field<Of, T>::in(const std::initializer_list<T> &vals)
+std::shared_ptr<Filter<Of>> Field<Of, T>::in(const std::initializer_list<T> &vals)
 {
-    return std::make_shared<ActualFilter<Of, T, std::initializer_list<T>>>(ActualFilter<Of, T, std::initializer_list<T>>{ *this, vals, "in" });
+    return std::make_shared<ActualFilter<Of, T, std::initializer_list<T>>>(*this, vals, "in");
 }
 
 template <typename Of, typename T>
 std::shared_ptr<Filter<Of>> ArrayField<Of, T>::matches(const std::initializer_list<T> &vals)
 {
-    return std::make_shared<ActualFilter<Of, std::initializer_list<T>>>(ActualFilter<Of, std::initializer_list<T>>{ *this, vals, "==" });
+    return std::make_shared<ActualFilter<Of, T, std::initializer_list<T>>>(*this, vals, "==");
 }
 
 

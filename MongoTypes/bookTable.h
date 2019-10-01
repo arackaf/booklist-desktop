@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mongoquerybase.h"
+#include "query.h"
 #include "field.h"
 #include <json.hpp>
 
@@ -43,7 +43,8 @@ CLASS(Books, Book, BookList)
 #define ArrayField(name, type) obj.name = j.contains(#name) ? j.at(#name).get<std::vector<type>>() : std::initializer_list<type>{};
 
 #define SERIALIZE(namespaceName, className, Expansion) namespace namespaceName { \
-    void from_json(const nlohmann::json &j, className &obj) { \
+    extern void from_json(const nlohmann::json &j, className &obj); \
+    inline void from_json(const nlohmann::json &j, className &obj) { \
         Expansion \
     } \
 }
@@ -52,7 +53,6 @@ SERIALIZE(Books, Book, BookList)
 
 #undef Field
 #undef ArrayField
-
     
 // ------------------------------- Type Filters -------------------------------------------
 

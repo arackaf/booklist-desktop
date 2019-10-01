@@ -3,19 +3,33 @@
 
 #include "filter.h"
 #include "query.h"
+#include "graphqlUrlGenerator.h"
 #include <curl/curl.h>
 #include <json.hpp>
 using json = nlohmann::json;
 
 #include "query.h"
-#include "mongoquerybase.h"
-#include "booktable.h"
+#include "bookTable.h"
+#include "listModel.h"
+#include "graphQLLoader.h"
+#include "listViewManager.h"
 
 #include <QAbstractListModel>
 #include <QStandardItemModel>
 #include <QStringList>
 #include <QVBoxLayout>
-#include <QStyledItemDelegate>
+#include <QPushButton>
+#include <QLabel>
+
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QObject>
+#include <fstream>
+#include <QDebug>
+
+using Data::Books::Book;
+
 
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
@@ -23,59 +37,16 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
     return size * nmemb;
 }
 
-using Data::Books::Book;
-
-class ListModel : public QAbstractListModel
-{
-private:
-    std::vector<Book> books;
-public:
-    ListModel(QObject *parent) : QAbstractListModel(parent), books({ Book{}, Book{}, Book{} }) {}
-    int rowCount(const QModelIndex &) const override;
-
-    QVariant data(const QModelIndex &index, int = Qt::DisplayRole) const override;
+struct PersonTemp {
+    std::string name;
 };
 
-int ListModel::rowCount(const QModelIndex &) const
+struct PersonTempSub : public PersonTemp {};
+
+void to_json(nlohmann::json &j, const std::shared_ptr<PersonTemp> &p)
 {
-    return 3;
+    j["name"] = p->name;
 }
-
-QVariant ListModel::data(const QModelIndex &index, int role) const
-{
-    return QVariant{};
-    //return books[index.row()];
-    if (role == Qt::DisplayRole ) {
-        return QString{ "Hello " };
-    }
-    return QVariant{};
-}
-
-struct BookViewDelegate : public QStyledItemDelegate
-{
-     BookViewDelegate(int height, QObject* parent = 0) : QStyledItemDelegate(parent), height(height) {}
-
-     int height;
-
-     QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
-     {
-         return QSize(0, height); //enter your values here
-     }
-
-     inline void paintXXX(QPainter *painter, const QStyleOptionViewItem &option,
-                       const QModelIndex &index ) const
-     {
-         // Set up a QStyleOptionProgressBar to precisely mimic the
-         // environment of a progress bar.
-         QStyleOptionButton boptions;
-         boptions.text = "My Buttonnnnnnnnn";
-         boptions.rect = option.rect;
-
-
-         // Draw the progress bar onto the view.
-         QApplication::style()->drawControl(QStyle::CE_PushButton, &boptions, painter);
-     }
-};
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -83,103 +54,90 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    std::string url = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
-    std::string url2 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%2050)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
-    std::string url3 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%205)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
-    std::string url4 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20pages%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
-    //auto res = system(command.c_str());
+    std::string _url3 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%2050%2C%20userId%3A%20%22HelloWorld%22)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
+    std::string url3 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%2050%2C%20userId%3A%20%22573d1b97120426ef0078aa92%22%2C%20SORT%3A%7Btitle%3A%201%7D)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
 
-    CURL *curl;
-    CURLcode res;
-    std::string readBuffer;
+    std::string url4_base1 = "https://mylibrary.io/graphql-public?query=query%20allBooks(%24page%3A%20Int)%20%7B%20%0A%20%20allBooks(PAGE%3A%24page%2C%20PAGE_SIZE%3A%2050%2C%20userId%3A%20%22573d1b97120426ef0078aa92%22%2C%20SORT%3A%7Btitle%3A%201%7D)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D&operationName=allBooks&variables=";
+    std::string url4_good1 = "https://mylibrary.io/graphql-public?query=query%20allBooks(%24page%3A%20Int)%20%7B%20%0A%20%20allBooks(PAGE%3A%24page%2C%20PAGE_SIZE%3A%2050%2C%20userId%3A%20%22573d1b97120426ef0078aa92%22%2C%20SORT%3A%7Btitle%3A%201%7D)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D&operationName=allBooks&variables=%7B%0A%20%20%22page%22%3A%202%0A%7D";
+    std::string url4_test1 = "https://mylibrary.io/graphql-public?query=query%20allBooks(%24page%3A%20Int)%20%7B%20%0A%20%20allBooks(PAGE%3A%24page%2C%20PAGE_SIZE%3A%2050%2C%20userId%3A%20%22573d1b97120426ef0078aa92%22%2C%20SORT%3A%7Btitle%3A%201%7D)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D&operationName=allBooks&variables=%7B%22page%22%3A2%7D";
 
-    curl = curl_easy_init();
-    if(curl) {
-      curl_easy_setopt(curl, CURLOPT_URL, url4.c_str());
-      curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-      curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-      res = curl_easy_perform(curl);
-      curl_easy_cleanup(curl);
+    std::string masterBase = "https://mylibrary.io/graphql-public?query=";
+    std::string url4_query = "query allBooks($page:Int,$title_contains:String){allBooks(PAGE:$page,PAGE_SIZE:50,userId:\"573d1b97120426ef0078aa92\",SORT:{title:1},title_contains: $title_contains){Books{title authors _id ean smallImage mediumImage userId}}}";
 
-      //std::string junk = readBuffer.c_str();
-      auto data = "Hello World";
-      std::string encoded = curl_easy_escape(curl, "hello world", 11);
+//https://mylibrary.io/graphql-public?query=query%20allBooks%28%24page%3AInt%29%7BallBooks%28PAGE%3A%24page%2CPAGE_SIZE%3A50%2CuserId%3A%22573d1b97120426ef0078aa92%22%2CSORT%3A%7Btitle%3A1%7D%29%7BBooks%7Btitle%20authors%20_id%20ean%20smallImage%20mediumImage%20userId%7D%7D%7D%26operationName%3DallBooks%26variables%3D%7B%22page%22%3A2%7D
 
+    //qDebug() << url4.c_str();
 
-      //ui->textEdit->setPlainText(QString { readBuffer.c_str() });
+    json searchObject;
+    searchObject["page"] = 1;
 
-      auto j2 = json::parse(readBuffer);
+    std::string variables = searchObject.dump();
+    qDebug() << variables.c_str();
 
-      auto dataMaybe = j2.find("data");
-      auto allBooksMaybe = dataMaybe->find("allBooks");
-      auto BooksMaybe = allBooksMaybe->find("Books");
+    std::string url4 = url4_base1 + encode(variables);
 
-      auto firstBook = BooksMaybe->at(0);
+    auto urlGenerator = GraphqlUrlGenerator::MakeUrlGenerator(url4_query);
 
-      auto titleMaybe = firstBook.find("title");
-      auto titleMaybe2 = firstBook["title"].get<std::string>();
-      auto pleaseDontCrash = firstBook["notHere"];
+    std::string final = urlGenerator(variables);
+    qDebug() << url4.c_str() << "final:\n\n" << final.c_str() << "\n\n";
 
-      auto titleprotect = firstBook["title"].empty();
-      auto crashProtect = pleaseDontCrash.empty();
-
-      Data::Books::Book b = firstBook;
-
-
-      size_t booksLength = BooksMaybe->size();
-
-      auto x = j2.begin();
-
-      auto y = *x;
-
-      auto z = y.begin();
-      auto zz = *z;
-
-      auto BooksBegin = zz.begin();
-      auto Books = *BooksBegin;
-
-      auto BooksArrayBegin = Books.begin();
-      auto BooksArr = *BooksArrayBegin;
-
-      for (auto el = BooksArr.begin(); el != BooksArr.end(); el++)
-      {
-          auto X = *el;
-          int k = 12;
-      }
-
-      int i = 12;
-      i++;
-    }
 
     using namespace Data::Books;
 
     auto q0 = makeFilter<Book>();
 
+    ActualFilter foo { title, { std::string{"A"}, std::string{"B"} }, "in" };
+    qDebug() << "\n\nDeduction Guide 1\n\n" << foo.serialize().c_str() << "\n\n";
+
+    ActualFilter foo2 { title, std::initializer_list<std::string>{ "C", "D" }, "in" };
+    qDebug() << "\n\nDeduction Guide 2\n\n" << foo2.serialize().c_str() << "\n\n";
+
+    ActualFilter foo3 { title, { "E", "F" }, "in" };
+    qDebug() << "\n\nDeduction Guide 3\n\n" << foo3.serialize().c_str() << "\n\n";
+
+    nlohmann::json jsonTest;
+    jsonTest["OR"] = std::vector<std::shared_ptr<PersonTemp>>{ std::make_shared<PersonTempSub>(PersonTempSub{{"Adam"}}), std::make_shared<PersonTempSub>(PersonTempSub{"Bob"}), std::make_shared<PersonTempSub>(PersonTempSub{"Matt"}) };
+    qDebug() << "\n\nTEST\n\n" << jsonTest.dump().c_str() << "\n\n";
+
     auto q = makeFilter(
 //        (weight < 10 || pages < 500) && (pages < 100 || weight < 90),
 
         title == "Hello World",
+        authors.matches({"a", "b"}),
+        authors.matches({"c", "d"}),
+        title.in({ "t1", "t2" }),
+        weight.in({ 2.2, 3.3, 4.4 }),
+        title == "Title 1" || title == "Title 2",
+
 
         //Data::Subjects::name == "junk",
 
-        weight < 50 || weight < 100 || weight < 100,
-        weight < 50 || weight < 100 || weight < 110 || weight < 120,
-        weight < 10 || (weight < 50 || weight < 100),
-        (weight < 10 || weight < 50) || weight < 100,
-        (weight < 10 || weight < 50) || (weight < 100 || weight < 110),
 
-        weight < 50 && weight < 100,
-        weight < 10 && (weight < 50 && weight < 100),
-        (weight < 10 && weight < 50) && weight < 100,
+        //weight < 50 || weight < 100 || weight < 100,
 
-        weight < 50 || (weight < 100 && weight < 200),
-        weight < 50 || weight < 60 || (weight < 100 && weight < 200),
-        (weight < 50 || weight < 60) || (weight < 100 && weight < 200),
-        (weight < 50 || weight < 100) && weight < 200,
+
+        //weight < 50 || weight < 100 || weight < 110 || weight < 120,
+        //weight < 10 || (weight < 50 || weight < 100),
+        //(weight < 10 || weight < 50) || weight < 100,
+        //(weight < 10 || weight < 50) || (weight < 100 || weight < 110),
+
+        //weight < 50 && weight.as("weight2") < 100,
+        //weight < 10 && (weight < 50 && weight < 100),
+        //(weight < 10 && weight < 50) && weight < 100,
+
+        //weight < 50 || (weight < 100 && weight < 200),
+        //weight < 50 || weight < 60 || (weight < 100 && weight < 200),
+        //(weight < 50 || weight < 60) || (weight < 100 && weight < 200),
+
+        (weight < 50 || weight.as("weight2") < 100) && weight < 200,
+
 
 //        title == "Hello World",
 //        "World Hello" == smallImage,
-        title.in({ "title1", "title2" }) || weight < 50,
+
+
+        title.as("title2").in({ "title1", "title2" }) || weight < 50
+
 //        pages == 20,
 //        20 == pages,
 
@@ -197,11 +155,13 @@ MainWindow::MainWindow(QWidget *parent) :
 //        title.as("titleAlias") == "Hello World",
 //        "Hello World" == title.as("titleAlias2"),
 
+                /*
         weight < 10 || weight < 50,
         //pages == 20,
         pages < 20,
         weight < 10 || (weight < 50 || weight < 100),
         weight < 10 || weight < 50 || weight < 100
+                */
     );
 
     //std::shared_ptr<Filter<Books>> x = weight < 10 || weight < 50;
@@ -220,27 +180,50 @@ MainWindow::MainWindow(QWidget *parent) :
         message += std::to_string(i++) + ": " + el->serialize() + "\n\n";
     }
 
-
     ui->textEdit->setPlainText(QString { (message + "\n\n" + q.serialize()).c_str() });
 
-    ListModel *model = new ListModel(nullptr);
-
-    ui->listView->setModel(model);
 
 
-    auto w = new QWidget();
-    auto v = new QVBoxLayout{};
-    v->addWidget(new QPushButton{"Heyooooo"});
-    v->addWidget(new QLabel{"Hi there"});
-    v->addWidget(new QPushButton{"Button 2"});
+    ListModel<Book> *model = new ListModel<Book>(nullptr);
 
-    w->setLayout(v);
+    ListViewManager<Book, BookListWidgetItem> *listViewManager = new ListViewManager<Book, BookListWidgetItem>{ ui->listView, 50 };
 
 
-    ui->listView->setIndexWidget(model->index(0), w);
-    ui->listView->setItemDelegate(new BookViewDelegate(v->sizeHint().height(), this));
+    GraphQLLoader<Book> *loader = new GraphQLLoader<Book> { [listViewManager](std::vector<Book> books) { listViewManager->setData(books); } };
+
+    qDebug() << "||" << final.c_str() << "||";
+    loader->load(final);
+
+    ui->tableWidget->insertRow(0);
+    ui->tableWidget->insertRow(1);
+    ui->tableWidget->insertRow(2);
+
+    ui->tableWidget->insertColumn(0);
+    ui->tableWidget->insertColumn(1);
+    ui->tableWidget->insertColumn(2);
+    ui->tableWidget->insertColumn(3);
+
+
+
+    connect(ui->pushButton, &QPushButton::released, [this, loader, urlGenerator, final](){
+        this->ui->titleSearchLineEdit->text();
+        json j;
+        std::string search = this->ui->titleSearchLineEdit->text().toStdString();
+
+        j["title_contains"] = search;
+        //j["page"] = 2;
+
+        qDebug() << "OLD" << "\n\n" << final.c_str() << "\n\n";
+        qDebug() << "NEW" << "\n\n" << urlGenerator(j.dump()).c_str() << "\n\nJSON:\n\n" << j.dump().c_str() << "\n\n";
+        loader->load(urlGenerator(j.dump()));
+
+        //loader->load(final);
+    });
+
+    //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
+
+    //model->update();
 }
-
 
 
 

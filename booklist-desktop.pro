@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT       += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -23,28 +24,41 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG += c++17
+
 LIBS += /usr/local/curl/lib/libcurl.dylib -lcurl
 
+
 SOURCES += \
-        Filter/filterutils.cpp \
+        DataDisplay/bookListWidgetItem.cpp \
+        Filter/filterUtils.cpp \
+        Query/graphqlUrlGenerator.cpp \
         Query/query.cpp \
+        Util/fileLoader.cpp \
         main.cpp \
         mainwindow.cpp \
 
 HEADERS += \
+        DataDisplay/bookListWidgetItem.h \
+        DataDisplay/listModel.h \
+        DataDisplay/listViewItemDelegate.h \
+        DataDisplay/listViewManager.h \
+        DataDisplay/listWidgetItem.h \
+        DataLoading/graphQLLoader.h \
         Field/field.h \
-        Filter/actualfilter.h \
+        Filter/actualFilter.h \
         Filter/filter.h \
-        Filter/filterutils.h \
-        Filter/operatorless.h \
-        Filter/operatoror.h \
+        Filter/filterUtils.h \
+        Filter/operatorLess.h \
+        Filter/operatorOr.h \
         Filters/filter.h \
-        MongoTypes/booktable.h \
-        Query/mongoquerybase.h \
+        MongoTypes/bookTable.h \
+        Query/graphqlUrlGenerator.h \
         Query/query.h \
+        Util/fileLoader.h \
         booktable.h \
         field.h \
         filterutils.h \
+        listmodel.h \
         mainwindow.h \
         mongoquerybase.h \
         query.h
@@ -58,10 +72,13 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 
+INCLUDEPATH += DataLoading
+INCLUDEPATH += DataDisplay
 INCLUDEPATH += Field
 INCLUDEPATH += Filter
 INCLUDEPATH += MongoTypes
 INCLUDEPATH += Query
+INCLUDEPATH += Util
 INCLUDEPATH += /usr/local/include
 INCLUDEPATH += /usr/local/Cellar/nlohmann_json/3.6.1/include/nlohmann
 

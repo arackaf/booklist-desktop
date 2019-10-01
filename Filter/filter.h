@@ -4,24 +4,42 @@
 #include <map>
 #include <iostream>
 #include <curl/curl.h>
+#include <json.hpp>
+
 #include "field.h"
-#include "filterutils.h"
-#include "operatoror.h"
-#include "operatorless.h"
+#include "filterUtils.h"
+#include "operatorOr.h"
+#include "operatorLess.h"
 
 template<typename Of>
 struct Filter
 {    
     using OfType = Of;
-    virtual std::string serialize() = 0;
+    std::string serialize();
+    virtual void addToSerialization(nlohmann::json &)  = 0;
     virtual ~Filter(){}
 };
+
+template<typename Of>
+std::string Filter<Of>::serialize()
+{
+    nlohmann::json j;
+    this->addToSerialization(j);
+    return j.dump();
+}
+
+template<typename Of>
+void to_json(nlohmann::json &j, const std::shared_ptr<Filter<Of>> &f)
+{
+    f->addToSerialization(j);
+}
 
 template<typename Of>
 struct FilterList : public Filter<Of>
 {
     FilterList(const std::initializer_list<std::shared_ptr<Filter<Of>>> &filters) : filters(filters) {}
     std::vector<std::shared_ptr<Filter<Of>>> filters;
+    virtual void addToSerialization(nlohmann::json &) = 0;
 };
 
 template<typename Of>
@@ -29,40 +47,29 @@ struct OrFilter : public FilterList<Of>
 {
     using FilterList<Of>::FilterList;
     std::string filterName { "OR" };
-    std::string serialize() override;
+    void addToSerialization(nlohmann::json &) override;
 };
 
 template <typename Of>
-std::string OrFilter<Of>::serialize()
+void OrFilter<Of>::addToSerialization(nlohmann::json &j)
 {
-    std::string result = "\"" + this->filterName + "\":[";
-
-    size_t i = 1;
-    for (const auto &el : this->filters)
-    {
-        result += "{" + el->serialize() + "}" + (i++ < this->filters.size() ? "," : "]");
-    }
-    return result;
+    j[this->filterName] = this->filters;
 }
 
 template<typename Of>
 struct AndFilter : public FilterList<Of>
 {
     using FilterList<Of>::FilterList;
-    std::string serialize() override;
+    void addToSerialization(nlohmann::json &) override;
 };
 
 template <typename Of>
-std::string AndFilter<Of>::serialize()
+void AndFilter<Of>::addToSerialization(nlohmann::json &j)
 {
-    std::string result { "" };
-
-    size_t i = 1;
-    for (const auto &el : this->filters)
+    for (auto i = 0; i < this->filters.size(); i++)
     {
-        result += el->serialize() + (i++ < this->filters.size() ? "," : "");
+        this->filters[i]->addToSerialization(j);
     }
-    return result;
 }
 
 
