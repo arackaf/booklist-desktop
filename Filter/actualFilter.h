@@ -25,7 +25,6 @@ struct ActualFilter: public Filter<Of>
     FilterValueType val;
     std::string op;
     Field<Of, FieldType> f;
-    std::string serialize() override;
     void addToSerialization(nlohmann::json &) override;
 };
 
@@ -35,14 +34,6 @@ ActualFilter(Field<Of, FieldType>, const std::initializer_list<FieldType> &, std
 template <typename Of>
 ActualFilter(Field<Of, std::string>, const std::initializer_list<const char *> &, std::string) -> ActualFilter<Of, std::string, std::initializer_list<std::string>>;
 
-
-template<typename Of, typename FieldType, typename FilterValueType>
-std::string ActualFilter<Of, FieldType, FilterValueType>::serialize()
-{
-    nlohmann::json j;
-    addToSerialization(j);
-    return j.dump();
-}
 
 template<typename Of, typename FieldType, typename FilterValueType>
 void ActualFilter<Of, FieldType, FilterValueType>::addToSerialization(nlohmann::json &j)

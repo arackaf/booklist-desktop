@@ -69,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //qDebug() << url4.c_str();
 
     json searchObject;
-    searchObject["page"] = 99;
+    searchObject["page"] = 1;
 
     std::string variables = searchObject.dump();
     qDebug() << variables.c_str();
@@ -104,37 +104,40 @@ MainWindow::MainWindow(QWidget *parent) :
 
         title == "Hello World",
         authors.matches({"a", "b"}),
+        authors.matches({"c", "d"}),
         title.in({ "t1", "t2" }),
-        weight.in({ 2.2, 3.3, 4.4 })
-
-        , title == "Title 1" || title == "Title 2"
+        weight.in({ 2.2, 3.3, 4.4 }),
+        title == "Title 1" || title == "Title 2",
 
 
         //Data::Subjects::name == "junk",
 
-            /*
-        weight < 50 || weight < 100 || weight < 100,
-        weight < 50 || weight < 100 || weight < 110 || weight < 120,
-        weight < 10 || (weight < 50 || weight < 100),
-        (weight < 10 || weight < 50) || weight < 100,
-        (weight < 10 || weight < 50) || (weight < 100 || weight < 110),
 
-        weight < 50 && weight < 100,
-        weight < 10 && (weight < 50 && weight < 100),
-        (weight < 10 && weight < 50) && weight < 100,
+        //weight < 50 || weight < 100 || weight < 100,
 
-        weight < 50 || (weight < 100 && weight < 200),
-        weight < 50 || weight < 60 || (weight < 100 && weight < 200),
-        (weight < 50 || weight < 60) || (weight < 100 && weight < 200),
-        (weight < 50 || weight < 100) && weight < 200,
-             */
+
+        //weight < 50 || weight < 100 || weight < 110 || weight < 120,
+        //weight < 10 || (weight < 50 || weight < 100),
+        //(weight < 10 || weight < 50) || weight < 100,
+        //(weight < 10 || weight < 50) || (weight < 100 || weight < 110),
+
+        //weight < 50 && weight.as("weight2") < 100,
+        //weight < 10 && (weight < 50 && weight < 100),
+        //(weight < 10 && weight < 50) && weight < 100,
+
+        //weight < 50 || (weight < 100 && weight < 200),
+        //weight < 50 || weight < 60 || (weight < 100 && weight < 200),
+        //(weight < 50 || weight < 60) || (weight < 100 && weight < 200),
+
+        (weight < 50 || weight.as("weight2") < 100) && weight < 200,
+
 
 //        title == "Hello World",
 //        "World Hello" == smallImage,
 
-             /*
-                title.in({ "title1", "title2" }) || weight < 50,
-            */
+
+        title.as("title2").in({ "title1", "title2" }) || weight < 50
+
 //        pages == 20,
 //        20 == pages,
 
