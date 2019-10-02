@@ -50,18 +50,11 @@ HEADERS += \
         Filter/filterUtils.h \
         Filter/operatorLess.h \
         Filter/operatorOr.h \
-        Filters/filter.h \
         MongoTypes/bookTable.h \
         Query/graphqlUrlGenerator.h \
         Query/query.h \
         Util/fileLoader.h \
-        booktable.h \
-        field.h \
-        filterutils.h \
-        listmodel.h \
         mainwindow.h \
-        mongoquerybase.h \
-        query.h
 
 FORMS += \
         mainwindow.ui
