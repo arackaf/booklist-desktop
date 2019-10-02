@@ -15,6 +15,7 @@ template<typename Of>
 struct Filter
 {    
     using OfType = Of;
+    //TODO: Eric
     virtual std::string serialize()
     {
         nlohmann::json j;

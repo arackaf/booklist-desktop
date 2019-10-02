@@ -57,15 +57,18 @@ SERIALIZE(Books, Book, BookList)
 // ------------------------------- Type Filters -------------------------------------------
 
 
-#define Field(name, type) extern ScopedField<type> name; \
-    inline ScopedField<type> name = ScopedField<type> { #name };
+#define Field(name, type) extern ScopedField<type>::Type name; \
+    inline ScopedField<type>::Type name = ScopedField<type>::Type { #name };
 
 #define ArrayField(name, type) extern ScopedArrayField<type> name; \
     inline ScopedArrayField<type> name = ScopedArrayField<type> { #name };
 
 #define FILTERS(namespaceName, className, Expansion) namespace namespaceName { \
     template <typename T> \
-    using ScopedField = Field<className, T>; \
+    struct ScopedField { using Type = Field<className, T>; }; \
+    template <> \
+    struct ScopedField<std::string> { using Type = StringField<className>; }; \
+    \
     template <typename T> \
     using ScopedArrayField = ArrayField<className, T>; \
     Expansion \

@@ -107,6 +107,7 @@ MainWindow::MainWindow(QWidget *parent) :
         title.in({ "t1", "t2" }),
         weight.in({ 2.2, 3.3, 4.4 }),
         title == "Title 1" || title == "Title 2",
+        title.contains("title"),
 
 
         //Data::Subjects::name == "junk",

@@ -27,6 +27,20 @@ struct Field
     Field as(const std::string &);
 };
 
+template <typename Of>
+struct StringField : public Field<Of, std::string>
+{
+    using Field<Of, std::string>::Field;
+    std::shared_ptr<Filter<Of>> contains(const std::string &);
+};
+
+template <typename Of>
+std::shared_ptr<Filter<Of>> StringField<Of>::contains(const std::string &val)
+{
+    return std::make_shared<ActualFilter<Of, std::string>>(*this, val, "contains");
+}
+
+
 template <typename Of, typename T>
 struct ArrayField : public Field<Of, T>
 {
@@ -51,22 +65,6 @@ std::shared_ptr<Filter<Of>> ArrayField<Of, T>::matches(const std::initializer_li
 {
     return std::make_shared<ActualFilter<Of, T, std::initializer_list<T>>>(*this, vals, "==");
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //  operator &&
 
