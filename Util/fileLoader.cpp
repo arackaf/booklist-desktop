@@ -8,6 +8,7 @@
 #include <QDebug>
 
 void FileLoader::fileDownloaded(QNetworkReply* pReply, const std::string &savePath) {
+    pReply->disconnect();
     QByteArray bts = pReply->readAll();
 
     std::ofstream file(savePath, std::ios::binary);
@@ -25,7 +26,6 @@ void FileLoader::loadImage(const std::string &url, const std::string &savePath)
     qDebug() << "Downloading ... ";
     QNetworkReply *reply = manager.get(QNetworkRequest(QUrl(url.c_str())));
     QObject::connect(reply, &QNetworkReply::finished, [this, savePath, reply]() {
-        reply->disconnect();
         this->fileDownloaded(reply, savePath);
     });
 }
