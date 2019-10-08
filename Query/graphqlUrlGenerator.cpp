@@ -2,10 +2,7 @@
 #include "query.h"
 #include <functional>
 
-GraphqlUrlGenerator::GraphqlUrlGenerator()
-{
-
-}
+GraphqlUrlGenerator::GraphqlUrlGenerator() {}
 
 std::string GraphqlUrlGenerator::MasterBase = "https://mylibrary.io/graphql-public?query=";
 
