@@ -2,7 +2,7 @@
 
 #include <string>
 #include <json.hpp>
-#include "filter.h"
+#include "actualFilter.h"
 
 template<typename T>
 std::string encode(T val);

@@ -2,15 +2,8 @@
 
 #include <json.hpp>
 
-#include "field.h"
 #include "filter.h"
 #include "filterUtils.h"
-
-template <typename Of>
-struct Filter;
-
-template <typename Of>
-struct OrFilter;
 
 template <typename Of, typename T>
 struct Field;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "filter.h"
+#include "actualFilter.h"
 
 template <typename Of, typename T>
 std::shared_ptr<OrFilter<Of>> operator ||(const std::shared_ptr<ActualFilter<Of, T>> &lhs, const std::shared_ptr<OrFilter<Of>> &rhs)

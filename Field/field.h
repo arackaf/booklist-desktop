@@ -4,18 +4,6 @@
 #include "filter.h"
 #include "actualFilter.h"
 
-template<typename Of>
-struct Filter;
-
-template<typename Of>
-struct OrFilter;
-
-template<typename Of>
-struct AndFilter;
-
-template<typename Of, typename FieldType, typename FilterValueType>
-struct ActualFilter;
-
 template <typename Of, typename T>
 struct Field
 {

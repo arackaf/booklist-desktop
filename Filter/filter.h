@@ -6,25 +6,22 @@
 #include <curl/curl.h>
 #include <json.hpp>
 
-#include "field.h"
-#include "filterUtils.h"
-#include "operatorOr.h"
-#include "operatorLess.h"
-
 template<typename Of>
 struct Filter
 {    
     using OfType = Of;
-    //TODO: Eric
-    virtual std::string serialize()
-    {
-        nlohmann::json j;
-        this->addToSerialization(j);
-        return j.dump();
-    }
+    virtual std::string serialize();
     virtual void addToSerialization(nlohmann::json &)  = 0;
     virtual ~Filter(){}
 };
+
+template <typename Of>
+std::string Filter<Of>::serialize()
+{
+    nlohmann::json j;
+    this->addToSerialization(j);
+    return j.dump();
+}
 
 template<typename Of>
 void to_json(nlohmann::json &j, const std::shared_ptr<Filter<Of>> &f)

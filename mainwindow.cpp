@@ -14,6 +14,9 @@ using json = nlohmann::json;
 #include "graphQLLoader.h"
 #include "listViewManager.h"
 
+#include "operatorOr.h"
+#include "operatorLess.h"
+
 #include <QAbstractListModel>
 #include <QStandardItemModel>
 #include <QStringList>
