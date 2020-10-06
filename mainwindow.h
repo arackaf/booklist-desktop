@@ -9,6 +9,9 @@
 #include "bookListWidgetItem.h"
 #include "bookTable.h"
 
+#include "graphQLLoader.h"
+#include "listViewManager.h"
+
 
 using Data::Books::Book;
 
@@ -27,6 +30,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    GraphQLLoader<Book> *loader;
+    ListViewManager<Book, BookListWidgetItem> *listViewManager;
 };
 
 

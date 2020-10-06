@@ -22,6 +22,7 @@ using json = nlohmann::json;
 #include <QStringList>
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QLineEdit>
 #include <QLabel>
 
 #include <QNetworkAccessManager>
@@ -55,6 +56,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    listViewManager = new ListViewManager<Book, BookListWidgetItem>{ ui->listView, 50 };
+    loader = new GraphQLLoader<Book> { [this](std::vector<Book> books) { listViewManager->setData(books); } };
 
     std::string _url3 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%2050%2C%20userId%3A%20%22HelloWorld%22)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
     std::string url3 = "https://mylibrary.io/graphql-public?query=%7B%0A%20%20allBooks(PAGE%3A1%2C%20PAGE_SIZE%3A%2050%2C%20userId%3A%20%22573d1b97120426ef0078aa92%22%2C%20SORT%3A%7Btitle%3A%201%7D)%7B%0A%20%20%20%20Books%7B%0A%20%20%20%20%20%20title%0A%20%20%20%20%20%20authors%0A%20%20%20%20%20%20_id%0A%20%20%20%20%20%20ean%0A%20%20%20%20%20%20smallImage%0A%20%20%20%20%20%20mediumImage%0A%20%20%20%20%20%20userId%0A%20%20%20%20%7D%0A%20%20%7D%0A%7D";
@@ -189,10 +192,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ListModel<Book> *model = new ListModel<Book>(nullptr);
 
-    ListViewManager<Book, BookListWidgetItem> *listViewManager = new ListViewManager<Book, BookListWidgetItem>{ ui->listView, 50 };
-
-
-    GraphQLLoader<Book> *loader = new GraphQLLoader<Book> { [listViewManager](std::vector<Book> books) { listViewManager->setData(books); } };
 
     qDebug() << "||" << final.c_str() << "||";
     loader->load(final);
@@ -206,9 +205,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableWidget->insertColumn(2);
     ui->tableWidget->insertColumn(3);
 
-
-
-    connect(ui->pushButton, &QPushButton::released, [this, loader, urlGenerator, final](){
+    connect(ui->pushButton, &QPushButton::released, [this, urlGenerator, final](){
         this->ui->titleSearchLineEdit->text();
         json j;
         std::string search = this->ui->titleSearchLineEdit->text().toStdString();
@@ -219,9 +216,12 @@ MainWindow::MainWindow(QWidget *parent) :
         qDebug() << "OLD" << "\n\n" << final.c_str() << "\n\n";
         qDebug() << "NEW" << "\n\n" << urlGenerator(j.dump()).c_str() << "\n\nJSON:\n\n" << j.dump().c_str() << "\n\n";
         loader->load(urlGenerator(j.dump()));
-
-        //loader->load(final);
     });
+
+    connect(ui->titleSearchLineEdit, &QLineEdit::returnPressed, [](){
+        qDebug() << "ENTER";
+    });
+
 
     //ui->listView->setItemDelegate(new BookViewDelegate(100, this));
 
@@ -233,4 +233,6 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete listViewManager;
+    delete loader;
 }
