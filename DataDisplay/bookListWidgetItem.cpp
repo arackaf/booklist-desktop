@@ -23,7 +23,7 @@ void BookListWidgetItem::init()
     w = new QWidget();
     auto gl = new QGridLayout{};
 
-    gl->setMargin(0);
+    //gl->setMargin(0);
 
     gl->setContentsMargins(10, 10, 0, 10);
 
@@ -37,7 +37,7 @@ void BookListWidgetItem::init()
     imgL = new QImage;
     //imgL->load(QString { url.c_str() });
     //imgL->load(QString{ "/Users/adam.rackis/Documents/booklist-local/smallImages/5d766937b552ee000400800f.jpg" });
-    imgL->load(QString{ "/Users/adam.rackis/Desktop/SAVED_covers/yellow.png" });
+    imgL->load(QString{ "/Users/arackis/Documents/git/booklist-desktop/saved_covers/yellow.jpg" });
     l->setPixmap(QPixmap::fromImage(*imgL));
     l->adjustSize();
 
@@ -74,7 +74,7 @@ void BookListWidgetItem::bind(const Book &b)
 {
     titleLabel->setText(QString::fromStdString(b.title));
 
-    std::string smallImageLocalPath = "/Users/adam.rackis/Documents/booklist-local/smallImages/" + imageUrlToFilename(b.smallImage);
+    std::string smallImageLocalPath = "/Users/arackis/Documents/git/booklist-desktop/saved_covers/smallImages/" + imageUrlToFilename(b.smallImage);
     this->currentImagePath = smallImageLocalPath;
 
 
